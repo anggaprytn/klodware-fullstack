@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
     <main className="login-wrap">
       <section className="login-panel">
         <h1>Klodware Admin</h1>
-        <p className="muted">Sign in with an active admin user.</p>
+        <p className="muted">Sign in with an active admin user or PocketBase superuser.</p>
         <form className="form" onSubmit={onSubmit}>
           <div className="field">
             <label htmlFor="username">Username</label>

@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type PocketBase from "pocketbase";
+import type { RecordModel } from "pocketbase";
+import { getServerEnv } from "./env";
 import {
   createPocketBaseClient,
   getSuperuserPocketBase,
@@ -9,6 +11,8 @@ import {
 import type { MobileUserProfile, UserRecord } from "./types";
 
 export const ADMIN_COOKIE = "klodware_admin_token";
+const ADMIN_USER_COOKIE_PREFIX = "user:";
+const ADMIN_SUPERUSER_COOKIE_PREFIX = "superuser:";
 
 export class AuthError extends Error {
   constructor(
@@ -33,6 +37,43 @@ export function toMobileUserProfile(user: UserRecord): MobileUserProfile {
     role: user.role,
     status: user.status,
   };
+}
+
+function adminCookieToken(kind: "user" | "superuser", token: string) {
+  return `${kind === "superuser" ? ADMIN_SUPERUSER_COOKIE_PREFIX : ADMIN_USER_COOKIE_PREFIX}${token}`;
+}
+
+function parseAdminCookieToken(value: string) {
+  if (value.startsWith(ADMIN_SUPERUSER_COOKIE_PREFIX)) {
+    return {
+      kind: "superuser" as const,
+      token: value.slice(ADMIN_SUPERUSER_COOKIE_PREFIX.length),
+    };
+  }
+
+  if (value.startsWith(ADMIN_USER_COOKIE_PREFIX)) {
+    return {
+      kind: "user" as const,
+      token: value.slice(ADMIN_USER_COOKIE_PREFIX.length),
+    };
+  }
+
+  return { kind: "user" as const, token: value };
+}
+
+function toSuperuserAdminRecord(record: RecordModel | null | undefined): UserRecord {
+  const env = getServerEnv();
+  const email = String(record?.email ?? env.PB_SUPERUSER_EMAIL);
+
+  return {
+    ...(record ?? {}),
+    id: record?.id ?? "__pb_superuser__",
+    username: email,
+    full_name: "PocketBase Superuser",
+    employee_no: "",
+    role: "admin",
+    status: "active",
+  } as UserRecord;
 }
 
 export function getBearerToken(request: Request) {
@@ -133,28 +174,93 @@ export async function requireMobileUser(request: Request) {
   }
 }
 
-export async function authenticateAdminLogin(username: string, password: string) {
-  const result = await authenticateMobileLogin(username, password);
+async function authenticateSuperuserAdminLogin(username: string, password: string) {
+  const env = getServerEnv();
 
-  if (result.user.role !== "admin") {
-    throw new AuthError("FORBIDDEN", "Admin access is required.");
+  if (username !== env.PB_SUPERUSER_EMAIL) {
+    throw new AuthError(
+      "INVALID_CREDENTIALS",
+      "Username or password is incorrect.",
+    );
   }
 
-  return result;
+  const pb = createPocketBaseClient();
+
+  try {
+    const auth = await pb
+      .collection("_superusers")
+      .authWithPassword<RecordModel>(username, password);
+
+    return {
+      token: auth.token,
+      cookieToken: adminCookieToken("superuser", auth.token),
+      user: toSuperuserAdminRecord(auth.record),
+    };
+  } catch (error) {
+    if (isPocketBaseResponseError(error)) {
+      throw new AuthError(
+        "INVALID_CREDENTIALS",
+        "Username or password is incorrect.",
+      );
+    }
+
+    throw error;
+  }
+}
+
+export async function authenticateAdminLogin(username: string, password: string) {
+  let userAuthError: AuthError;
+
+  try {
+    const result = await authenticateMobileLogin(username, password);
+
+    if (result.user.role !== "admin") {
+      throw new AuthError("FORBIDDEN", "Admin access is required.");
+    }
+
+    return {
+      ...result,
+      cookieToken: adminCookieToken("user", result.token),
+    };
+  } catch (error) {
+    if (!(error instanceof AuthError)) {
+      throw error;
+    }
+
+    userAuthError = error;
+  }
+
+  try {
+    return await authenticateSuperuserAdminLogin(username, password);
+  } catch {
+    throw userAuthError;
+  }
 }
 
 export async function refreshAdminSession() {
   const cookieStore = await cookies();
-  const token = cookieStore.get(ADMIN_COOKIE)?.value;
+  const cookieToken = cookieStore.get(ADMIN_COOKIE)?.value;
 
-  if (!token) {
+  if (!cookieToken) {
     return null;
   }
+
+  const { kind, token } = parseAdminCookieToken(cookieToken);
 
   const pb = createPocketBaseClient();
   pb.authStore.save(token, null);
 
   try {
+    if (kind === "superuser") {
+      const auth = await pb.collection("_superusers").authRefresh<RecordModel>();
+
+      return {
+        pb,
+        token: auth.token,
+        user: toSuperuserAdminRecord(auth.record),
+      };
+    }
+
     const auth = await pb.collection("users").authRefresh<UserRecord>();
 
     if (auth.record.status !== "active" || auth.record.role !== "admin") {

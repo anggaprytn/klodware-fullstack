@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const response = mobileSuccess({ ok: true });
     const secure = getServerEnv().APP_BASE_URL.startsWith("https://");
 
-    response.cookies.set(ADMIN_COOKIE, auth.token, {
+    response.cookies.set(ADMIN_COOKIE, auth.cookieToken, {
       httpOnly: true,
       sameSite: "lax",
       secure,

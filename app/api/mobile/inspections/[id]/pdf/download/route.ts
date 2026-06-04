@@ -6,7 +6,7 @@ import {
   InspectionAccessError,
   readyPdfReportHasFile,
 } from "@/lib/inspections";
-import { mobileError } from "@/lib/mobile-response";
+import { mobileAuthErrorStatus, mobileError } from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { pocketBaseFileUrl } from "@/lib/pdf/report-access";
 import { verifyPdfDownloadToken } from "@/lib/pdf/pdf-token";
@@ -144,7 +144,7 @@ export async function GET(
         payload: { inspection_id: id },
         error: { code: error.code, message: error.message },
       });
-      return mobileError(error.code === "FORBIDDEN" ? 403 : 401, {
+      return mobileError(mobileAuthErrorStatus(error.code), {
         code: error.code,
         message: error.message,
         retryable: false,

@@ -1,0 +1,92 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+      PB_URL: http://pocketbase:8090
+      PB_SUPERUSER_EMAIL: ${PB_SUPERUSER_EMAIL}
+      PB_SUPERUSER_PASSWORD: ${PB_SUPERUSER_PASSWORD}
+      APP_BASE_URL: ${APP_BASE_URL}
+      MAX_INSPECTION_PHOTO_BYTES: ${MAX_INSPECTION_PHOTO_BYTES:-10485760}
+      PDF_WORKER_ENABLED: ${PDF_WORKER_ENABLED:-true}
+      PDF_DOWNLOAD_TTL_MINUTES: ${PDF_DOWNLOAD_TTL_MINUTES:-15}
+      PDF_DOWNLOAD_SECRET: ${PDF_DOWNLOAD_SECRET}
+      PDF_STUCK_GENERATING_MINUTES: ${PDF_STUCK_GENERATING_MINUTES:-15}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/mobile/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 5
+
+  pdf-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    command: ["npm", "run", "worker:pdf", "--", "--watch"]
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      PB_URL: http://pocketbase:8090
+      PB_SUPERUSER_EMAIL: ${PB_SUPERUSER_EMAIL}
+      PB_SUPERUSER_PASSWORD: ${PB_SUPERUSER_PASSWORD}
+      APP_BASE_URL: ${APP_BASE_URL}
+      MAX_INSPECTION_PHOTO_BYTES: ${MAX_INSPECTION_PHOTO_BYTES:-10485760}
+      PDF_WORKER_ENABLED: ${PDF_WORKER_ENABLED:-true}
+      PDF_DOWNLOAD_TTL_MINUTES: ${PDF_DOWNLOAD_TTL_MINUTES:-15}
+      PDF_DOWNLOAD_SECRET: ${PDF_DOWNLOAD_SECRET}
+      PDF_STUCK_GENERATING_MINUTES: ${PDF_STUCK_GENERATING_MINUTES:-15}
+
+  pocketbase:
+    build:
+      context: .
+      dockerfile: docker/pocketbase/Dockerfile
+      args:
+        POCKETBASE_VERSION: ${POCKETBASE_VERSION:-0.38.2}
+    restart: unless-stopped
+    volumes:
+      - pocketbase-data:/pb/pb_data
+    expose:
+      - "8090"
+
+  setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    profiles:
+      - setup
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    command: ["sh", "-lc", "npm run setup:pocketbase && npm run seed:template && npm run seed:vessels"]
+    environment:
+      NODE_ENV: production
+      PB_URL: http://pocketbase:8090
+      PB_SUPERUSER_EMAIL: ${PB_SUPERUSER_EMAIL}
+      PB_SUPERUSER_PASSWORD: ${PB_SUPERUSER_PASSWORD}
+      APP_BASE_URL: ${APP_BASE_URL}
+      MAX_INSPECTION_PHOTO_BYTES: ${MAX_INSPECTION_PHOTO_BYTES:-10485760}
+      PDF_WORKER_ENABLED: ${PDF_WORKER_ENABLED:-true}
+      PDF_DOWNLOAD_TTL_MINUTES: ${PDF_DOWNLOAD_TTL_MINUTES:-15}
+      PDF_DOWNLOAD_SECRET: ${PDF_DOWNLOAD_SECRET}
+      PDF_STUCK_GENERATING_MINUTES: ${PDF_STUCK_GENERATING_MINUTES:-15}
+
+volumes:
+  pocketbase-data:

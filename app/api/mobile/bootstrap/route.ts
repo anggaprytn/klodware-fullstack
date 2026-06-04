@@ -1,9 +1,10 @@
 import { AuthError, requireMobileUser, toMobileUserProfile } from "@/lib/auth";
+import { toMobileTemplateMetadata } from "@/lib/mobile-catalog";
 import {
-  toMobileTemplateMetadata,
-  toMobileVessel,
-} from "@/lib/mobile-catalog";
-import { mobileError, mobileSuccess } from "@/lib/mobile-response";
+  mobileAuthErrorStatus,
+  mobileError,
+  mobileSuccess,
+} from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import type { ChecklistTemplateRecord, VesselRecord } from "@/lib/types";
 
@@ -39,12 +40,10 @@ export async function GET(request: Request) {
         active_only: true,
       },
       user: toMobileUserProfile(auth.user),
-      vessels: vessels.map(toMobileVessel),
-      server_time: new Date().toISOString(),
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return mobileError(error.code === "FORBIDDEN" ? 403 : 401, {
+      return mobileError(mobileAuthErrorStatus(error.code), {
         code: error.code,
         message: error.message,
         retryable: false,

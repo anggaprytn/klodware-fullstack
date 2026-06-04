@@ -1,6 +1,10 @@
 import { AuthError, requireMobileUser } from "@/lib/auth";
 import { toMobileTemplateDetail } from "@/lib/mobile-catalog";
-import { mobileError, mobileSuccess } from "@/lib/mobile-response";
+import {
+  mobileAuthErrorStatus,
+  mobileError,
+  mobileSuccess,
+} from "@/lib/mobile-response";
 import { getSuperuserPocketBase, isPocketBaseResponseError } from "@/lib/pocketbase";
 import type { ChecklistTemplateRecord } from "@/lib/types";
 
@@ -27,7 +31,7 @@ export async function GET(
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return mobileError(error.code === "FORBIDDEN" ? 403 : 401, {
+      return mobileError(mobileAuthErrorStatus(error.code), {
         code: error.code,
         message: error.message,
         retryable: false,

@@ -1,0 +1,100 @@
+@baseUrl = http://localhost:3000
+@accessToken = replace-with-login-token
+@deviceId = dev-smoke-device
+@requestId = 00000000-0000-4000-8000-000000000001
+@templateId = superintendent-monthly-v1
+@inspectionId = replace-with-inspection-id
+
+### Health
+GET {{baseUrl}}/api/mobile/health
+Accept: application/json
+
+### Login
+POST {{baseUrl}}/api/mobile/auth/login
+Content-Type: application/json
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+< ../examples/login.request.json
+
+### Current user
+GET {{baseUrl}}/api/mobile/auth/me
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+### Bootstrap
+GET {{baseUrl}}/api/mobile/bootstrap
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+### Vessels
+GET {{baseUrl}}/api/mobile/vessels
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+### Template
+GET {{baseUrl}}/api/mobile/checklist-templates/{{templateId}}
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+### Upsert inspection
+POST {{baseUrl}}/api/mobile/inspections/upsert
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+< ../examples/inspection-upsert.request.json
+
+### Photo upload placeholder
+POST {{baseUrl}}/api/mobile/inspections/{{inspectionId}}/photos
+Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+file: ./before.jpg
+local_photo_id: local-photo-001
+device_id: {{deviceId}}
+item_template_id: 10-draft-mark
+section_code: 10
+photo_type: before
+captured_at: 2026-06-04T03:05:00.000Z
+vessel_id: vessel_001
+checksum: sha256:photo-checksum
+metadata_json: {"camera":"rear"}
+
+### Submit
+POST {{baseUrl}}/api/mobile/inspections/{{inspectionId}}/submit
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+< ../examples/submit.request.json
+
+### PDF status
+GET {{baseUrl}}/api/mobile/inspections/{{inspectionId}}/pdf
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}
+
+### PDF download
+GET {{baseUrl}}/api/mobile/inspections/{{inspectionId}}/pdf/download
+Authorization: Bearer {{accessToken}}
+X-Device-Id: {{deviceId}}
+X-App-Version: 1.0.0
+X-Request-Id: {{requestId}}

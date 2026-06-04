@@ -15,7 +15,11 @@ import {
   InspectionAccessError,
   rawPayloadFromInspection,
 } from "@/lib/inspections";
-import { mobileError, mobileSuccess } from "@/lib/mobile-response";
+import {
+  mobileAuthErrorStatus,
+  mobileError,
+  mobileSuccess,
+} from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { deviceIdFrom, logSyncEvent, requestIdFrom } from "@/lib/sync-events";
 
@@ -49,7 +53,7 @@ export async function POST(
         error: { code: error.code, message: error.message },
       });
 
-      return mobileError(error.code === "FORBIDDEN" ? 403 : 401, {
+      return mobileError(mobileAuthErrorStatus(error.code), {
         code: error.code,
         message: error.message,
         retryable: false,

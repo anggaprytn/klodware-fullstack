@@ -47,3 +47,7 @@ export function mobileError(
     { ...init, status },
   );
 }
+
+export function mobileAuthErrorStatus(code: string) {
+  return code === "FORBIDDEN" || code === "USER_INACTIVE" ? 403 : 401;
+}

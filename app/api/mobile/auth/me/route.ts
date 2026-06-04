@@ -1,5 +1,9 @@
 import { AuthError, requireMobileUser, toMobileUserProfile } from "@/lib/auth";
-import { mobileError, mobileSuccess } from "@/lib/mobile-response";
+import {
+  mobileAuthErrorStatus,
+  mobileError,
+  mobileSuccess,
+} from "@/lib/mobile-response";
 
 export const runtime = "nodejs";
 
@@ -12,7 +16,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return mobileError(error.code === "FORBIDDEN" ? 403 : 401, {
+      return mobileError(mobileAuthErrorStatus(error.code), {
         code: error.code,
         message: error.message,
         retryable: false,

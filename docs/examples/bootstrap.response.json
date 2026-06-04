@@ -1,0 +1,33 @@
+{
+  "success": true,
+  "server_time": "2026-06-04T06:30:00.000Z",
+  "data": {
+    "app_config": {
+      "api_contract": "mobile-rest-json-v1",
+      "inspection_execution": "mobile-only"
+    },
+    "active_template": {
+      "id": "superintendent-monthly-v1",
+      "record_id": "tpl_record_001",
+      "type": "superintendent-monthly",
+      "name": "Superintendent Monthly Inspection Checklist",
+      "version": 1,
+      "checksum": "sha256:template-checksum",
+      "active": true,
+      "sections_count": 30,
+      "items_count": 272
+    },
+    "vessel_catalog": {
+      "count": 1,
+      "active_only": true
+    },
+    "user": {
+      "id": "u_inspector_001",
+      "username": "inspector.dev",
+      "full_name": "Dev Inspector",
+      "employee_no": "EMP-001",
+      "role": "inspector",
+      "status": "active"
+    }
+  }
+}

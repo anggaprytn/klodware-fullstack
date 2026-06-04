@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "server_time": "2026-06-04T06:35:00.000Z",
+  "data": {
+    "inspection_id": "insp_001",
+    "status": "submitted",
+    "locked": true,
+    "pdf_status": "queued",
+    "pdf_report_id": "pdf_001"
+  }
+}

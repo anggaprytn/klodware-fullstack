@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "server_time": "2026-06-04T06:45:00.000Z",
+  "data": {
+    "inspection_id": "insp_001",
+    "pdf_status": "ready",
+    "pdf_report_id": "pdf_001",
+    "file_size_bytes": 245760,
+    "generated_at": "2026-06-04T06:44:00.000Z",
+    "pdf_url": "http://localhost:3000/api/mobile/inspections/insp_001/pdf/download?token=signed-token",
+    "expires_at": "2026-06-04T07:00:00.000Z"
+  }
+}

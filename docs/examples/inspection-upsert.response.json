@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "server_time": "2026-06-04T06:30:00.000Z",
+  "data": {
+    "inspection_id": "insp_001",
+    "local_id": "local-insp-20260604-001",
+    "status": "draft",
+    "pdf_status": "not_requested",
+    "synced_at": "2026-06-04T06:30:00.000Z"
+  }
+}

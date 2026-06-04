@@ -1,0 +1,16 @@
+{
+  "success": false,
+  "server_time": "2026-06-04T06:35:00.000Z",
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Inspection is not complete",
+    "retryable": false,
+    "details": [
+      {
+        "item_template_id": "10-draft-mark",
+        "field": "before_photo",
+        "message": "Before photo is required for score 3 or 4"
+      }
+    ]
+  }
+}

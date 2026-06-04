@@ -1,6 +1,6 @@
 # Coolify Docker Compose Deploy
 
-Coolify supports deploying Docker Compose applications directly from a compose file. Use `docker-compose.coolify.yml` for this project.
+Coolify supports deploying Docker Compose applications directly from a compose file. Use `docker-compose.yml` for this project.
 
 ## Services
 
@@ -14,7 +14,7 @@ PocketBase must stay hidden behind Next.js route handlers. Do not assign a publi
 ## Coolify Setup
 
 1. Create a new Docker Compose application in Coolify from this repository.
-2. Set the compose file path to `docker-compose.coolify.yml`.
+2. Set the compose file path to `docker-compose.yml`.
 3. Set the public domain on the `app` service only.
 4. Add environment variables from `.env.coolify.example` in Coolify.
 5. Set `APP_BASE_URL` to the public HTTPS URL of the `app` service.
@@ -31,12 +31,14 @@ PDF_DOWNLOAD_SECRET
 
 Use a long random value for `PDF_DOWNLOAD_SECRET`.
 
-## First PocketBase Superuser
+## PocketBase Superuser
 
-On a fresh PocketBase volume, create the superuser before running setup. Use Coolify's terminal for the `pocketbase` service:
+The `pocketbase` service automatically creates or updates the superuser from `PB_SUPERUSER_EMAIL` and `PB_SUPERUSER_PASSWORD` before starting PocketBase.
+
+If you ever need to repair it manually, use Coolify's terminal for the `pocketbase` service:
 
 ```bash
-/pb/pocketbase superuser create "$PB_SUPERUSER_EMAIL" "$PB_SUPERUSER_PASSWORD" --dir=/pb/pb_data
+/pb/pocketbase superuser upsert "admin@example.com" "replace-with-the-coolify-secret" --dir=/pb/pb_data
 ```
 
 If your PocketBase version reports a different CLI command, use the command shown by:
@@ -47,10 +49,10 @@ If your PocketBase version reports a different CLI command, use the command show
 
 ## Run Setup And Seeds
 
-After the first deploy and superuser creation, run the setup profile once from a terminal:
+After the first deploy, run the setup profile once from a terminal:
 
 ```bash
-docker compose -f docker-compose.coolify.yml --profile setup run --rm setup
+docker compose -f docker-compose.yml --profile setup run --rm setup
 ```
 
 Equivalent commands inside the `app` container:
@@ -74,8 +76,8 @@ npm run seed:vessels
 For local validation with Docker:
 
 ```bash
-docker compose -f docker-compose.coolify.yml --env-file .env.coolify.example build
-docker compose -f docker-compose.coolify.yml --env-file .env.coolify.example up app pdf-worker pocketbase
+docker compose -f docker-compose.yml --env-file .env.coolify.example build
+docker compose -f docker-compose.yml --env-file .env.coolify.example up app pdf-worker pocketbase
 ```
 
 For real deployments, replace all example secrets in Coolify.

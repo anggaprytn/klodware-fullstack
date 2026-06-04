@@ -1,14 +1,18 @@
 {
-  "template_id": "superintendent-monthly-v1",
-  "type": "superintendent-monthly",
-  "version": 1,
+  "id": "superintendent-monthly-v1",
+  "type": "superintendent_monthly",
   "name": "Superintendent Monthly Inspection Checklist",
-  "source": {
-    "prd": "docs/PRD.md",
-    "expected_pdf": "docs/reference/5.7-superintendent-monthly-inspection-checklist-v1.2.pdf",
-    "reference_userguide": "docs/reference/ship-maintenance-userguide.pdf",
-    "checklist_extraction_status": "missing_source_pdf",
-    "note": "Checklist PDF is missing from repo. Please add it to docs/reference before full extraction."
+  "version": 1,
+  "photo_policy": {
+    "rating_values_requiring_photo": [
+      "3",
+      "4"
+    ],
+    "rating_values_requiring_remarks": [
+      "3",
+      "4"
+    ],
+    "after_photo_required_when_resolved": true
   },
   "rating_options": [
     {
@@ -45,163 +49,2172 @@
   "sections": [
     {
       "code": "10",
-      "title": "Shell",
-      "items": []
+      "name": "Shell",
+      "sort_order": 1,
+      "items": [
+        {
+          "id": "10-ship-name",
+          "label": "Ship Name",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 1
+        },
+        {
+          "id": "10-draft-mark",
+          "label": "Draft Mark",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 2
+        },
+        {
+          "id": "10-topside-bulwark-condition",
+          "label": "Topside / bulwark condition",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 3
+        },
+        {
+          "id": "10-hull-structure-condition",
+          "label": "Hull structure condition",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 4
+        },
+        {
+          "id": "10-marking",
+          "label": "Marking",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 5
+        },
+        {
+          "id": "10-fenders-condition",
+          "label": "Fenders condition",
+          "type": "rating_item",
+          "section_code": "10",
+          "sort_order": 6
+        }
+      ]
     },
     {
       "code": "12",
-      "title": "Deck",
-      "items": []
+      "name": "Deck",
+      "sort_order": 2,
+      "items": [
+        {
+          "id": "12-main-deck-general-condition",
+          "label": "Main deck general condition",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 1
+        },
+        {
+          "id": "12-fairleads",
+          "label": "Fairleads",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 2
+        },
+        {
+          "id": "12-h-bitt",
+          "label": "H-bitt",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 3
+        },
+        {
+          "id": "12-bollards",
+          "label": "Bollards",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 4
+        },
+        {
+          "id": "12-hatches",
+          "label": "Hatches",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 5
+        },
+        {
+          "id": "12-mushroom-vents",
+          "label": "Mushroom vents",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 6
+        },
+        {
+          "id": "12-vent-heads",
+          "label": "Vent heads",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 7
+        },
+        {
+          "id": "12-mooring-rope-wire",
+          "label": "Mooring rope / wire",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 8
+        },
+        {
+          "id": "12-watertight-doors",
+          "label": "Watertight doors",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 9
+        },
+        {
+          "id": "12-manhole-covers",
+          "label": "Manhole covers",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 10
+        },
+        {
+          "id": "12-towing-hook",
+          "label": "Towing hook",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 11
+        },
+        {
+          "id": "12-valves",
+          "label": "Valves",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 12
+        },
+        {
+          "id": "12-signages",
+          "label": "Signages",
+          "type": "rating_item",
+          "section_code": "12",
+          "sort_order": 13
+        }
+      ]
     },
     {
       "code": "14",
-      "title": "Accommodation",
-      "items": []
+      "name": "Accommodation",
+      "sort_order": 3,
+      "items": [
+        {
+          "id": "14-public-space",
+          "label": "Public space",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 1
+        },
+        {
+          "id": "14-galley",
+          "label": "Galley",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 2
+        },
+        {
+          "id": "14-shower-toilet",
+          "label": "Shower / Toilet",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 3
+        },
+        {
+          "id": "14-cabins",
+          "label": "Cabins",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 4
+        },
+        {
+          "id": "14-mess-room-stores",
+          "label": "Mess room / Stores",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 5
+        },
+        {
+          "id": "14-portholes",
+          "label": "Portholes",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 6
+        },
+        {
+          "id": "14-handrails",
+          "label": "Handrails",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 7
+        },
+        {
+          "id": "14-accommodation-house",
+          "label": "Accommodation house",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 8
+        },
+        {
+          "id": "14-fittings-on-the-bridge-mast",
+          "label": "Fittings on the bridge / mast",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 9
+        },
+        {
+          "id": "14-doors-and-windows-on-the-bridge-deck",
+          "label": "Doors and windows on the bridge deck",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 10
+        },
+        {
+          "id": "14-electrical-lighting-inside-accommodation",
+          "label": "Electrical lighting (inside accommodation)",
+          "type": "rating_item",
+          "section_code": "14",
+          "sort_order": 11
+        }
+      ]
     },
     {
       "code": "21",
-      "title": "Windlass & Mooring Winch",
-      "items": []
+      "name": "Windlass & Mooring Winch",
+      "sort_order": 4,
+      "items": [
+        {
+          "id": "21-anchor-windlass-winch",
+          "label": "Anchor windlass / Winch",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 1
+        },
+        {
+          "id": "21-anchor-chain",
+          "label": "Anchor chain",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 2
+        },
+        {
+          "id": "21-anchor-chain-stopper",
+          "label": "Anchor chain stopper",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 3
+        },
+        {
+          "id": "21-windlass-brake",
+          "label": "Windlass Brake",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 4
+        },
+        {
+          "id": "21-windlass-control-stand",
+          "label": "Windlass control stand",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 5
+        },
+        {
+          "id": "21-hydraulic-pump",
+          "label": "Hydraulic Pump",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 6
+        },
+        {
+          "id": "21-hydraulic-pipes",
+          "label": "Hydraulic Pipes",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 7
+        },
+        {
+          "id": "21-towing-winch-aft",
+          "label": "Towing winch (Aft)",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 8
+        },
+        {
+          "id": "21-hydraulic-pump-aft",
+          "label": "Hydraulic pump (Aft)",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 9
+        },
+        {
+          "id": "21-hydraulic-pipes-aft",
+          "label": "Hydraulic pipes (Aft)",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 10
+        },
+        {
+          "id": "21-other-mooring-equipment",
+          "label": "Other mooring equipment",
+          "type": "rating_item",
+          "section_code": "21",
+          "sort_order": 11
+        }
+      ]
     },
     {
       "code": "23",
-      "title": "Steering Gear / Azimuth Propeller",
-      "items": []
+      "name": "Steering Gear / Azimuth Propeller",
+      "sort_order": 5,
+      "items": [
+        {
+          "id": "23-hydraulic-pumps-pipes-flexible-hoses-and-v-belts",
+          "label": "Hydraulic pumps, pipes, flexible hoses & V-belts",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 1
+        },
+        {
+          "id": "23-emergency-steering-gear-manual-operation-device",
+          "label": "Emergency steering gear / Manual operation device",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 2
+        },
+        {
+          "id": "23-steering-gear-instruction-posted",
+          "label": "Steering gear instruction posted",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 3
+        },
+        {
+          "id": "23-check-oil-level",
+          "label": "Check oil level",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 4
+        },
+        {
+          "id": "23-oil-sample-check-for-water-content-milky-color",
+          "label": "Oil sample - check for water content (milky color)",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 5
+        },
+        {
+          "id": "23-lo-analysis",
+          "label": "LO Analysis",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 6
+        },
+        {
+          "id": "23-control-air-pressure",
+          "label": "Control air pressure",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 7
+        },
+        {
+          "id": "23-clutch-assembly",
+          "label": "Clutch assembly",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 8
+        },
+        {
+          "id": "23-cardan-shaft",
+          "label": "Cardan shaft",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 9
+        },
+        {
+          "id": "23-electrical-components-and-consoles",
+          "label": "Electrical components & consoles",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 10
+        },
+        {
+          "id": "23-alarms-and-trips",
+          "label": "Alarms & trips",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 11
+        },
+        {
+          "id": "23-bulkhead-packing",
+          "label": "Bulkhead packing",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 12
+        },
+        {
+          "id": "23-abnormal-vibrations",
+          "label": "Abnormal vibrations",
+          "type": "rating_item",
+          "section_code": "23",
+          "sort_order": 13
+        }
+      ]
     },
     {
       "code": "24",
-      "title": "Electrical Deck",
-      "items": []
+      "name": "Electrical Deck",
+      "sort_order": 6,
+      "items": [
+        {
+          "id": "24-deck-lights-and-electrical-cables",
+          "label": "Deck lights and electrical cables",
+          "type": "rating_item",
+          "section_code": "24",
+          "sort_order": 1
+        },
+        {
+          "id": "24-switchboard-distribution-board",
+          "label": "Switchboard (Distribution Board)",
+          "type": "rating_item",
+          "section_code": "24",
+          "sort_order": 2
+        }
+      ]
     },
     {
       "code": "32",
-      "title": "Pumps / Stripping Device",
-      "items": []
+      "name": "Pumps / Stripping Device",
+      "sort_order": 7,
+      "items": [
+        {
+          "id": "32-ballast-pump",
+          "label": "Ballast Pump",
+          "type": "rating_item",
+          "section_code": "32",
+          "sort_order": 1
+        }
+      ]
     },
     {
       "code": "33",
-      "title": "Windlass / Towing Winch Hydraulic System",
-      "items": []
+      "name": "Windlass / Towing Winch Hydraulic System",
+      "sort_order": 8,
+      "items": [
+        {
+          "id": "33-hydraulic-unit",
+          "label": "Hydraulic unit",
+          "type": "rating_item",
+          "section_code": "33",
+          "sort_order": 1
+        },
+        {
+          "id": "33-hydraulic-line",
+          "label": "Hydraulic line",
+          "type": "rating_item",
+          "section_code": "33",
+          "sort_order": 2
+        },
+        {
+          "id": "33-valves",
+          "label": "Valves",
+          "type": "rating_item",
+          "section_code": "33",
+          "sort_order": 3
+        }
+      ]
     },
     {
       "code": "35",
-      "title": "Pipes",
-      "items": []
+      "name": "Pipes",
+      "sort_order": 9,
+      "items": [
+        {
+          "id": "35-ballast-line",
+          "label": "Ballast line",
+          "type": "rating_item",
+          "section_code": "35",
+          "sort_order": 1
+        },
+        {
+          "id": "35-bunker-line-on-deck",
+          "label": "Bunker line on deck",
+          "type": "rating_item",
+          "section_code": "35",
+          "sort_order": 2
+        },
+        {
+          "id": "35-other-pipe-line-on-deck",
+          "label": "Other pipe line on deck",
+          "type": "rating_item",
+          "section_code": "35",
+          "sort_order": 3
+        }
+      ]
     },
     {
       "code": "41",
-      "title": "Navigation Instrument",
-      "items": []
+      "name": "Navigation Instrument",
+      "sort_order": 10,
+      "items": [
+        {
+          "id": "41-gps",
+          "label": "GPS",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 1
+        },
+        {
+          "id": "41-radar",
+          "label": "Radar",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 2
+        },
+        {
+          "id": "41-radar-reflector",
+          "label": "Radar reflector",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 3
+        },
+        {
+          "id": "41-echo-sounder",
+          "label": "Echo sounder",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 4
+        },
+        {
+          "id": "41-magnetic-compass",
+          "label": "Magnetic compass",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 5
+        },
+        {
+          "id": "41-spare-magnetic-compass",
+          "label": "Spare magnetic compass",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 6
+        },
+        {
+          "id": "41-anemometer",
+          "label": "Anemometer",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 7
+        },
+        {
+          "id": "41-air-horn",
+          "label": "Air horn",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 8
+        },
+        {
+          "id": "41-navigation-light",
+          "label": "Navigation light",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 9
+        },
+        {
+          "id": "41-daylight-signaling-shapes",
+          "label": "Daylight signaling shapes",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 10
+        },
+        {
+          "id": "41-rpm-indicator",
+          "label": "RPM indicator",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 11
+        },
+        {
+          "id": "41-rudder-angle-indicator",
+          "label": "Rudder angle indicator",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 12
+        },
+        {
+          "id": "41-engine-telegraph",
+          "label": "Engine telegraph",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 13
+        },
+        {
+          "id": "41-maneuvering-characteristic",
+          "label": "Maneuvering characteristic",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 14
+        },
+        {
+          "id": "41-magnetic-compass-deviation-curve",
+          "label": "Magnetic compass deviation curve",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 15
+        },
+        {
+          "id": "41-automatic-identification-system-ais",
+          "label": "Automatic Identification System (AIS)",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 16
+        },
+        {
+          "id": "41-light-panel",
+          "label": "Light panel",
+          "type": "rating_item",
+          "section_code": "41",
+          "sort_order": 17
+        }
+      ]
     },
     {
       "code": "42",
-      "title": "Radio Equipment / Communication",
-      "items": []
+      "name": "Radio Equipment / Communication",
+      "sort_order": 11,
+      "items": [
+        {
+          "id": "42-navtex",
+          "label": "Navtex",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 1
+        },
+        {
+          "id": "42-mf-hf-transceiver-dsc-unit",
+          "label": "MF / HF Transceiver / DSC / Unit",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 2
+        },
+        {
+          "id": "42-epirb",
+          "label": "EPIRB",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 3
+        },
+        {
+          "id": "42-dsc-vhf-primary-no-1",
+          "label": "DSC VHF Primary (No. 1)",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 4
+        },
+        {
+          "id": "42-two-additional-vhf-walkie-talkies-black",
+          "label": "Two Additional VHF Walkie Talkies (Black)",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 5
+        },
+        {
+          "id": "42-3-gmdss-walkie-talkies-yellow",
+          "label": "3 GMDSS Walkie Talkies (Yellow)",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 6
+        },
+        {
+          "id": "42-antenna-equipment",
+          "label": "Antenna Equipment",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 7
+        },
+        {
+          "id": "42-pa-system-with-talk-back",
+          "label": "PA System with Talk-back",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 8
+        },
+        {
+          "id": "42-emergency-battery",
+          "label": "Emergency Battery",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 9
+        },
+        {
+          "id": "42-emergency-light",
+          "label": "Emergency light",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 10
+        },
+        {
+          "id": "42-aldis-lamp",
+          "label": "Aldis lamp",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 11
+        },
+        {
+          "id": "42-spare-battery-for-aldis-lamp",
+          "label": "Spare battery for Aldis lamp",
+          "type": "rating_item",
+          "section_code": "42",
+          "sort_order": 12
+        }
+      ]
     },
     {
       "code": "43",
-      "title": "Publication",
-      "items": []
+      "name": "Publication",
+      "sort_order": 12,
+      "items": [
+        {
+          "id": "43-chart-including-correction",
+          "label": "Chart (including correction)",
+          "type": "rating_item",
+          "section_code": "43",
+          "sort_order": 1
+        },
+        {
+          "id": "43-tide-table",
+          "label": "Tide Table",
+          "type": "rating_item",
+          "section_code": "43",
+          "sort_order": 2
+        },
+        {
+          "id": "43-international-code-of-signal",
+          "label": "International Code of Signal",
+          "type": "rating_item",
+          "section_code": "43",
+          "sort_order": 3
+        },
+        {
+          "id": "43-nautical-almanac",
+          "label": "Nautical Almanac",
+          "type": "rating_item",
+          "section_code": "43",
+          "sort_order": 4
+        },
+        {
+          "id": "43-pilotage-book",
+          "label": "Pilotage book",
+          "type": "rating_item",
+          "section_code": "43",
+          "sort_order": 5
+        }
+      ]
     },
     {
       "code": "53",
-      "title": "Life Raft",
-      "items": []
+      "name": "Life Raft",
+      "sort_order": 13,
+      "items": [
+        {
+          "id": "53-life-raft-appearance",
+          "label": "Life raft appearance",
+          "type": "rating_item",
+          "section_code": "53",
+          "sort_order": 1
+        },
+        {
+          "id": "53-life-raft-launching-device-hru",
+          "label": "Life raft launching device (HRU)",
+          "type": "rating_item",
+          "section_code": "53",
+          "sort_order": 2
+        },
+        {
+          "id": "53-operating-instruction",
+          "label": "Operating instruction",
+          "type": "rating_item",
+          "section_code": "53",
+          "sort_order": 3
+        }
+      ]
     },
     {
       "code": "54",
-      "title": "Other Life Saving Appliance",
-      "items": []
+      "name": "Other Life Saving Appliance",
+      "sort_order": 14,
+      "items": [
+        {
+          "id": "54-lifebuoy-with-self-igniting-light",
+          "label": "Lifebuoy with self-igniting light",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 1
+        },
+        {
+          "id": "54-lifebuoy-with-smoke-and-light-indicator",
+          "label": "Lifebuoy with smoke & light indicator",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 2
+        },
+        {
+          "id": "54-life-jacket",
+          "label": "Life jacket",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 3
+        },
+        {
+          "id": "54-life-line-throwing-appliance",
+          "label": "Life line throwing appliance",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 4
+        },
+        {
+          "id": "54-life-saving-signal-rocket-parachute-etc",
+          "label": "Life saving signal (Rocket Parachute, etc)",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 5
+        },
+        {
+          "id": "54-sart",
+          "label": "SART",
+          "type": "rating_item",
+          "section_code": "54",
+          "sort_order": 6
+        }
+      ]
     },
     {
       "code": "55",
-      "title": "Fire Fighting",
-      "items": []
+      "name": "Fire Fighting",
+      "sort_order": 15,
+      "items": [
+        {
+          "id": "55-fire-control-plan-3-pcs",
+          "label": "Fire control plan (3 pcs)",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 1
+        },
+        {
+          "id": "55-smoke-detector",
+          "label": "Smoke detector",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 2
+        },
+        {
+          "id": "55-fire-fighting-instruction",
+          "label": "Fire fighting instruction",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 3
+        },
+        {
+          "id": "55-hydrant-box-hose-nozzle",
+          "label": "Hydrant box, hose, nozzle",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 4
+        },
+        {
+          "id": "55-portable-fire-extinguisher",
+          "label": "Portable fire extinguisher",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 5
+        },
+        {
+          "id": "55-fireman-s-outfit-complete-with-accessories",
+          "label": "Fireman's outfit, complete with accessories",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 6
+        },
+        {
+          "id": "55-emergency-stop-of-fans",
+          "label": "Emergency stop of fans",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 7
+        },
+        {
+          "id": "55-emergency-stop-of-pumps",
+          "label": "Emergency stop of pumps",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 8
+        },
+        {
+          "id": "55-fo-tank-shut-off-valves",
+          "label": "FO tank shut off valves",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 9
+        },
+        {
+          "id": "55-international-shore-connection",
+          "label": "International shore connection",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 10
+        },
+        {
+          "id": "55-dampers-er-hold-accommodation",
+          "label": "Dampers (ER / Hold / Accommodation)",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 11
+        },
+        {
+          "id": "55-fire-alarm",
+          "label": "Fire alarm",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 12
+        },
+        {
+          "id": "55-general-alarm",
+          "label": "General alarm",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 13
+        },
+        {
+          "id": "55-fire-blanket-in-galley",
+          "label": "Fire blanket in galley",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 14
+        },
+        {
+          "id": "55-breathing-apparatus",
+          "label": "Breathing apparatus",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 15
+        },
+        {
+          "id": "55-portable-fire-pump",
+          "label": "Portable fire pump",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 16
+        },
+        {
+          "id": "55-international-shore-connection-additional",
+          "label": "International shore connection",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 17
+        },
+        {
+          "id": "55-imo-symbols-in-good-condition-and-sufficient-quantity",
+          "label": "IMO symbols in good condition and sufficient quantity",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 18
+        },
+        {
+          "id": "55-sufficient-liquid-foam-quantity",
+          "label": "Sufficient liquid foam quantity",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 19
+        },
+        {
+          "id": "55-foam-pump-in-working-condition",
+          "label": "Foam pump in working condition",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 20
+        },
+        {
+          "id": "55-first-aid-box-with-updated-medical-inventory",
+          "label": "First aid box with updated medical inventory",
+          "type": "rating_item",
+          "section_code": "55",
+          "sort_order": 21
+        }
+      ]
     },
     {
       "code": "57",
-      "title": "Bilge, Waste Oil Control",
-      "items": []
+      "name": "Bilge, Waste Oil Control",
+      "sort_order": 16,
+      "items": [
+        {
+          "id": "57-bilge-pump",
+          "label": "Bilge pump",
+          "type": "rating_item",
+          "section_code": "57",
+          "sort_order": 1
+        },
+        {
+          "id": "57-bilge-treatment-system",
+          "label": "Bilge treatment system",
+          "type": "rating_item",
+          "section_code": "57",
+          "sort_order": 2
+        },
+        {
+          "id": "57-bilge-overboard-valve",
+          "label": "Bilge overboard valve",
+          "type": "rating_item",
+          "section_code": "57",
+          "sort_order": 3
+        }
+      ]
     },
     {
       "code": "58",
-      "title": "Bunkering Procedure",
-      "items": []
+      "name": "Bunkering Procedure",
+      "sort_order": 17,
+      "items": [
+        {
+          "id": "58-bunkering-manual",
+          "label": "Bunkering manual",
+          "type": "rating_item",
+          "section_code": "58",
+          "sort_order": 1
+        },
+        {
+          "id": "58-bunkering-pipeline",
+          "label": "Bunkering pipeline",
+          "type": "rating_item",
+          "section_code": "58",
+          "sort_order": 2
+        },
+        {
+          "id": "58-bunkering-accessories",
+          "label": "Bunkering accessories",
+          "type": "rating_item",
+          "section_code": "58",
+          "sort_order": 3
+        },
+        {
+          "id": "58-oil-tray-scupper-plug",
+          "label": "Oil tray, Scupper plug",
+          "type": "rating_item",
+          "section_code": "58",
+          "sort_order": 4
+        }
+      ]
     },
     {
       "code": "59",
-      "title": "Pollution Prevention Material",
-      "items": []
+      "name": "Pollution Prevention Material",
+      "sort_order": 18,
+      "items": [
+        {
+          "id": "59-oil-spill-dispersant-20l",
+          "label": "Oil spill dispersant (20L)",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 1
+        },
+        {
+          "id": "59-sand-5-kgs",
+          "label": "Sand (5 kgs)",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 2
+        },
+        {
+          "id": "59-saw-dust-5-kgs",
+          "label": "Saw dust (5 kgs)",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 3
+        },
+        {
+          "id": "59-oil-absorbent-sheets-150-pcs",
+          "label": "Oil absorbent sheets (150 pcs)",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 4
+        },
+        {
+          "id": "59-line-proportioner",
+          "label": "Line proportioner",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 5
+        },
+        {
+          "id": "59-bucket-ladle-boom-scoop",
+          "label": "Bucket, ladle, boom, scoop",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 6
+        },
+        {
+          "id": "59-diaphragm-pump",
+          "label": "Diaphragm pump",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 7
+        },
+        {
+          "id": "59-scupper-plug",
+          "label": "Scupper plug",
+          "type": "rating_item",
+          "section_code": "59",
+          "sort_order": 8
+        }
+      ]
     },
     {
       "code": "61",
-      "title": "Main Engine / Propulsion",
-      "items": []
+      "name": "Main Engine / Propulsion",
+      "sort_order": 19,
+      "items": [
+        {
+          "id": "61-me-general-appearance-performance",
+          "label": "ME general appearance / performance",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 1
+        },
+        {
+          "id": "61-me-cylinder-cover",
+          "label": "ME cylinder cover",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 2
+        },
+        {
+          "id": "61-me-mounting-valves",
+          "label": "ME mounting valves",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 3
+        },
+        {
+          "id": "61-me-turbocharger-intercooler",
+          "label": "ME Turbocharger / Intercooler",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 4
+        },
+        {
+          "id": "61-me-fo-injection-pumps",
+          "label": "ME FO injection pumps",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 5
+        },
+        {
+          "id": "61-me-maneuvering-system",
+          "label": "ME Maneuvering System",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 6
+        },
+        {
+          "id": "61-me-lo-quality-analysis-result",
+          "label": "ME LO Quality (analysis result)",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 7
+        },
+        {
+          "id": "61-jacket-cooling-water-quality-analysis-result",
+          "label": "Jacket Cooling Water Quality (analysis result)",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 8
+        },
+        {
+          "id": "61-me-instruments",
+          "label": "ME instruments",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 9
+        },
+        {
+          "id": "61-me-safety-device",
+          "label": "ME Safety Device",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 10
+        },
+        {
+          "id": "61-me-spares",
+          "label": "ME Spares",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 11
+        },
+        {
+          "id": "61-exhaust-insulation",
+          "label": "Exhaust Insulation",
+          "type": "rating_item",
+          "section_code": "61",
+          "sort_order": 12
+        }
+      ]
     },
     {
       "code": "62",
-      "title": "Diesel Generator",
-      "items": []
+      "name": "Diesel Generator",
+      "sort_order": 20,
+      "items": [
+        {
+          "id": "62-d-g-general-appearance-performance",
+          "label": "D/G General Appearance / Performance",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 1
+        },
+        {
+          "id": "62-d-g-cylinder-cover",
+          "label": "D/G cylinder cover",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 2
+        },
+        {
+          "id": "62-d-g-mounting-valves",
+          "label": "D/G mounting valves",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 3
+        },
+        {
+          "id": "62-d-g-turbocharger-intercooler",
+          "label": "D/G turbocharger / intercooler",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 4
+        },
+        {
+          "id": "62-d-g-heat-exchanger",
+          "label": "D/G Heat Exchanger",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 5
+        },
+        {
+          "id": "62-d-g-lo-quality-analysis-results",
+          "label": "D/G LO quality (analysis results)",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 6
+        },
+        {
+          "id": "62-jacket-cooling-water-quality-analysis-result",
+          "label": "Jacket cooling water quality (analysis result)",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 7
+        },
+        {
+          "id": "62-d-g-instruments",
+          "label": "D/G instruments",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 8
+        },
+        {
+          "id": "62-d-g-safety-device",
+          "label": "D/G safety device",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 9
+        },
+        {
+          "id": "62-exhaust-insulation",
+          "label": "Exhaust Insulation",
+          "type": "rating_item",
+          "section_code": "62",
+          "sort_order": 10
+        }
+      ]
     },
     {
       "code": "71",
-      "title": "Auxiliary Machinery",
-      "items": []
+      "name": "Auxiliary Machinery",
+      "sort_order": 21,
+      "items": [
+        {
+          "id": "71-fuel-oil-system-pipes-valves-filters",
+          "label": "Fuel oil system (pipes, valves, filters)",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 1
+        },
+        {
+          "id": "71-fo-pumps",
+          "label": "FO Pumps",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 2
+        },
+        {
+          "id": "71-fo-purifiers",
+          "label": "FO Purifiers",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 3
+        },
+        {
+          "id": "71-lub-oil-systems-pipes-valves-filters",
+          "label": "Lub oil systems (pipes, valves, filters)",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 4
+        },
+        {
+          "id": "71-lo-pumps",
+          "label": "LO Pumps",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 5
+        },
+        {
+          "id": "71-lo-purifiers",
+          "label": "LO Purifiers",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 6
+        },
+        {
+          "id": "71-lo-heat-exchangers",
+          "label": "LO heat exchangers",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 7
+        },
+        {
+          "id": "71-sw-cooling-system-pipes-valves-coolers",
+          "label": "SW cooling system (pipes, valves, coolers)",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 8
+        },
+        {
+          "id": "71-sw-pumps",
+          "label": "SW pumps",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 9
+        },
+        {
+          "id": "71-fw-cooling-system-pipes-valves-coolers",
+          "label": "FW cooling system (pipes, valves, coolers)",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 10
+        },
+        {
+          "id": "71-fw-pumps",
+          "label": "FW pumps",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 11
+        },
+        {
+          "id": "71-compressed-air-system-in-general",
+          "label": "Compressed air system (in general)",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 12
+        },
+        {
+          "id": "71-main-air-compressor",
+          "label": "Main air compressor",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 13
+        },
+        {
+          "id": "71-service-air-compressor",
+          "label": "Service air compressor",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 14
+        },
+        {
+          "id": "71-air-dryer-reservoir",
+          "label": "Air dryer / reservoir",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 15
+        },
+        {
+          "id": "71-instrument-air-system",
+          "label": "Instrument air system",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 16
+        },
+        {
+          "id": "71-bilge-system",
+          "label": "Bilge system",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 17
+        },
+        {
+          "id": "71-bilge-pump",
+          "label": "Bilge pump",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 18
+        },
+        {
+          "id": "71-automatic-control-system",
+          "label": "Automatic control system",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 19
+        },
+        {
+          "id": "71-er-mechanical-ventilator",
+          "label": "ER mechanical ventilator",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 20
+        },
+        {
+          "id": "71-monitoring-and-alarm-system",
+          "label": "Monitoring and alarm system",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 21
+        },
+        {
+          "id": "71-workshop-machinery",
+          "label": "Workshop machinery",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 22
+        },
+        {
+          "id": "71-auxiliary-machinery-others",
+          "label": "Auxiliary machinery / others",
+          "type": "rating_item",
+          "section_code": "71",
+          "sort_order": 23
+        }
+      ]
     },
     {
       "code": "72",
-      "title": "Ventilation, Air Conditioning & Refrigeration Systems",
-      "items": []
+      "name": "Ventilation, Air Conditioning & Refrigeration Systems",
+      "sort_order": 22,
+      "items": [
+        {
+          "id": "72-air-conditioning-system",
+          "label": "Air conditioning system",
+          "type": "rating_item",
+          "section_code": "72",
+          "sort_order": 1
+        },
+        {
+          "id": "72-provision-refrigerator",
+          "label": "Provision refrigerator",
+          "type": "rating_item",
+          "section_code": "72",
+          "sort_order": 2
+        },
+        {
+          "id": "72-ventilation-for-accommodation",
+          "label": "Ventilation for accommodation",
+          "type": "rating_item",
+          "section_code": "72",
+          "sort_order": 3
+        }
+      ]
     },
     {
       "code": "73",
-      "title": "Electrical Engine Room",
-      "items": []
+      "name": "Electrical Engine Room",
+      "sort_order": 23,
+      "items": [
+        {
+          "id": "73-main-and-auxiliary-switchboard",
+          "label": "Main and auxiliary switchboard",
+          "type": "rating_item",
+          "section_code": "73",
+          "sort_order": 1
+        },
+        {
+          "id": "73-electrical-machinery",
+          "label": "Electrical machinery",
+          "type": "rating_item",
+          "section_code": "73",
+          "sort_order": 2
+        },
+        {
+          "id": "73-cabling",
+          "label": "Cabling",
+          "type": "rating_item",
+          "section_code": "73",
+          "sort_order": 3
+        },
+        {
+          "id": "73-insulation",
+          "label": "Insulation",
+          "type": "rating_item",
+          "section_code": "73",
+          "sort_order": 4
+        },
+        {
+          "id": "73-lighting-in-engine-room",
+          "label": "Lighting in engine room",
+          "type": "rating_item",
+          "section_code": "73",
+          "sort_order": 5
+        }
+      ]
     },
     {
       "code": "74",
-      "title": "Engine Structure",
-      "items": []
+      "name": "Engine Structure",
+      "sort_order": 24,
+      "items": [
+        {
+          "id": "74-e-r-floor",
+          "label": "E/R floor",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 1
+        },
+        {
+          "id": "74-e-r-tank-top-condition",
+          "label": "E/R tank top condition",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 2
+        },
+        {
+          "id": "74-engine-room-fire-door",
+          "label": "Engine room fire door",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 3
+        },
+        {
+          "id": "74-e-r-fitting-other",
+          "label": "E/R fitting (other)",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 4
+        },
+        {
+          "id": "74-fuel-pipes-and-valves",
+          "label": "Fuel pipes and valves",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 5
+        },
+        {
+          "id": "74-seawater-pipes-and-valves",
+          "label": "Seawater pipes and valves",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 6
+        },
+        {
+          "id": "74-air-pipes-and-valves",
+          "label": "Air pipes and valves",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 7
+        },
+        {
+          "id": "74-exhaust-gas-pipe",
+          "label": "Exhaust gas pipe",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 8
+        },
+        {
+          "id": "74-lo-pipes-and-valves",
+          "label": "LO pipes and valves",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 9
+        },
+        {
+          "id": "74-sea-suction-overboard-valve",
+          "label": "Sea suction / overboard valve",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 10
+        },
+        {
+          "id": "74-pipe-and-valves-others",
+          "label": "Pipe and valves (others)",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 11
+        },
+        {
+          "id": "74-marking-of-pipes-and-valves",
+          "label": "Marking of pipes and valves",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 12
+        },
+        {
+          "id": "74-engine-control-room",
+          "label": "Engine control room",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 13
+        },
+        {
+          "id": "74-workshop-and-store-room",
+          "label": "Workshop and store room",
+          "type": "rating_item",
+          "section_code": "74",
+          "sort_order": 14
+        }
+      ]
     },
     {
       "code": "75",
-      "title": "Fire, Safety & Environmental Equipment",
-      "items": []
+      "name": "Fire, Safety & Environmental Equipment",
+      "sort_order": 25,
+      "items": [
+        {
+          "id": "75-fire-and-gs-pumps",
+          "label": "Fire & GS pumps",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 1
+        },
+        {
+          "id": "75-main-ff-pump-water-cannon",
+          "label": "Main FF pump (water cannon)",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 2
+        },
+        {
+          "id": "75-harbour-generator",
+          "label": "Harbour generator",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 3
+        },
+        {
+          "id": "75-emergency-fire-pump",
+          "label": "Emergency fire pump",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 4
+        },
+        {
+          "id": "75-emergency-air-compressor",
+          "label": "Emergency air compressor",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 5
+        },
+        {
+          "id": "75-oily-water-separator",
+          "label": "Oily water separator",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 6
+        },
+        {
+          "id": "75-bilge-cleanliness-hl-alarm-tested",
+          "label": "Bilge cleanliness / HL Alarm Tested",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 7
+        },
+        {
+          "id": "75-tank-top-condition",
+          "label": "Tank top condition",
+          "type": "rating_item",
+          "section_code": "75",
+          "sort_order": 8
+        }
+      ]
     },
     {
       "code": "81",
-      "title": "Security",
-      "items": []
+      "name": "Security",
+      "sort_order": 26,
+      "items": [
+        {
+          "id": "81-restriction-of-fire-use",
+          "label": "Restriction of fire use",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 1
+        },
+        {
+          "id": "81-ship-s-equipment-for-security",
+          "label": "Ship's equipment for security",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 2
+        },
+        {
+          "id": "81-contingency-plan",
+          "label": "Contingency plan",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 3
+        },
+        {
+          "id": "81-muster-plan",
+          "label": "Muster plan",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 4
+        },
+        {
+          "id": "81-fire-drill",
+          "label": "Fire drill",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 5
+        },
+        {
+          "id": "81-abandon-ship-drill",
+          "label": "Abandon ship drill",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 6
+        },
+        {
+          "id": "81-rescue-drill",
+          "label": "Rescue drill",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 7
+        },
+        {
+          "id": "81-emergency-steering-drill",
+          "label": "Emergency steering drill",
+          "type": "rating_item",
+          "section_code": "81",
+          "sort_order": 8
+        }
+      ]
     },
     {
       "code": "82",
-      "title": "Ship Certificates",
-      "items": []
+      "name": "Ship Certificates",
+      "sort_order": 27,
+      "items": [
+        {
+          "id": "82-safety-construction",
+          "label": "Safety Construction",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 1
+        },
+        {
+          "id": "82-safety-equipment",
+          "label": "Safety Equipment",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 2
+        },
+        {
+          "id": "82-safety-radio",
+          "label": "Safety Radio",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 3
+        },
+        {
+          "id": "82-load-line-certificate",
+          "label": "Load Line Certificate",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 4
+        },
+        {
+          "id": "82-class-survey-report",
+          "label": "Class Survey Report",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 5
+        },
+        {
+          "id": "82-iopp",
+          "label": "IOPP",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 6
+        },
+        {
+          "id": "82-class-certificate-hull",
+          "label": "Class Certificate (Hull)",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 7
+        },
+        {
+          "id": "82-class-certificate-machinery",
+          "label": "Class Certificate (Machinery)",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 8
+        },
+        {
+          "id": "82-certificate-of-nationality",
+          "label": "Certificate of Nationality",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 9
+        },
+        {
+          "id": "82-tonnage-certificate",
+          "label": "Tonnage Certificate",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 10
+        },
+        {
+          "id": "82-ship-station-license",
+          "label": "Ship Station License",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 11
+        },
+        {
+          "id": "82-ship-sanitation-certificate",
+          "label": "Ship Sanitation Certificate",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 12
+        },
+        {
+          "id": "82-port-health-clearance-and-medical-chest-certificate",
+          "label": "Port Health Clearance & Medical Chest Certificate",
+          "type": "rating_item",
+          "section_code": "82",
+          "sort_order": 13
+        }
+      ]
     },
     {
       "code": "84",
-      "title": "Records",
-      "items": []
+      "name": "Records",
+      "sort_order": 28,
+      "items": [
+        {
+          "id": "84-official-log-book",
+          "label": "Official Log Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 1
+        },
+        {
+          "id": "84-compass-error-book",
+          "label": "Compass Error Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 2
+        },
+        {
+          "id": "84-master-s-night-order-book",
+          "label": "Master's Night Order Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 3
+        },
+        {
+          "id": "84-radio-log-book",
+          "label": "Radio Log Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 4
+        },
+        {
+          "id": "84-vhf-log-book",
+          "label": "VHF Log Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 5
+        },
+        {
+          "id": "84-engine-log-book",
+          "label": "Engine Log Book",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 6
+        },
+        {
+          "id": "84-maintenance-records-reports-m-e-d-g",
+          "label": "Maintenance records / reports (M/E, D/G)",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 7
+        },
+        {
+          "id": "84-m-e-performance-data",
+          "label": "M/E Performance Data",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 8
+        },
+        {
+          "id": "84-spare-parts-list-inventory",
+          "label": "Spare parts list / inventory",
+          "type": "rating_item",
+          "section_code": "84",
+          "sort_order": 9
+        }
+      ]
     },
     {
       "code": "85",
-      "title": "Management General & Deck Department",
-      "items": []
+      "name": "Management General & Deck Department",
+      "sort_order": 29,
+      "items": [
+        {
+          "id": "85-ism-internal-audit-records",
+          "label": "ISM Internal Audit / Records",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 1
+        },
+        {
+          "id": "85-ballast-tank-inspection",
+          "label": "Ballast tank inspection",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 2
+        },
+        {
+          "id": "85-plan-of-deck-maintenance",
+          "label": "Plan of deck maintenance",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 3
+        },
+        {
+          "id": "85-discipline-watchkeeping-in-port",
+          "label": "Discipline / Watchkeeping in Port",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 4
+        },
+        {
+          "id": "85-dress-condition-of-duty-person",
+          "label": "Dress condition of duty person",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 5
+        },
+        {
+          "id": "85-wearing-of-safety-helmet",
+          "label": "Wearing of safety helmet",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 6
+        },
+        {
+          "id": "85-prohibition-of-drugs-alcohol",
+          "label": "Prohibition of Drugs / Alcohol",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 7
+        },
+        {
+          "id": "85-understanding-of-sms",
+          "label": "Understanding of SMS",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 8
+        },
+        {
+          "id": "85-maintenance-records-lsffa",
+          "label": "Maintenance records LSFFA",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 9
+        },
+        {
+          "id": "85-test-method-of-epirb-and-sart",
+          "label": "Test method of EPIRB & SART",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 10
+        },
+        {
+          "id": "85-use-of-fireman-s-outfit",
+          "label": "Use of Fireman's Outfit",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 11
+        },
+        {
+          "id": "85-use-of-throwing-appliances",
+          "label": "Use of throwing appliances",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 12
+        },
+        {
+          "id": "85-display-of-safety-sign",
+          "label": "Display of safety sign",
+          "type": "rating_item",
+          "section_code": "85",
+          "sort_order": 13
+        }
+      ]
     },
     {
       "code": "86",
-      "title": "Management Engine Department",
-      "items": []
-    },
-    {
-      "code": "RH",
-      "title": "Machinery Total Running Hours",
-      "items": []
-    },
-    {
-      "code": "OC",
-      "title": "Other Comments",
-      "items": []
+      "name": "Management Engine Department",
+      "sort_order": 30,
+      "items": [
+        {
+          "id": "86-pms",
+          "label": "PMS",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 1
+        },
+        {
+          "id": "86-power-management-of-m-e",
+          "label": "Power management of M/E",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 2
+        },
+        {
+          "id": "86-maintenance-plan-any-outstanding-work",
+          "label": "Maintenance plan / any outstanding work?",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 3
+        },
+        {
+          "id": "86-fo-sounding-book",
+          "label": "FO sounding book",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 4
+        },
+        {
+          "id": "86-lo-inventory",
+          "label": "LO inventory",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 5
+        },
+        {
+          "id": "86-chemical-inventory",
+          "label": "Chemical inventory",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 6
+        },
+        {
+          "id": "86-emergency-operation-test",
+          "label": "Emergency operation test",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 7
+        },
+        {
+          "id": "86-power-management-of-d-g",
+          "label": "Power management of D/G",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 8
+        },
+        {
+          "id": "86-special-tools-and-instruments",
+          "label": "Special tools and instruments",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 9
+        },
+        {
+          "id": "86-docking-records",
+          "label": "Docking records",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 10
+        },
+        {
+          "id": "86-megger-test",
+          "label": "Megger test",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 11
+        },
+        {
+          "id": "86-wearing-of-proper-personnel-protective-equipment",
+          "label": "Wearing of proper personnel protective equipment",
+          "type": "rating_item",
+          "section_code": "86",
+          "sort_order": 12
+        }
+      ]
     }
-  ]
+  ],
+  "running_hours": [
+    {
+      "id": "rh-main-engine-no-1",
+      "label": "Main Engine No. 1",
+      "type": "running_hour",
+      "sort_order": 1
+    },
+    {
+      "id": "rh-main-engine-no-2",
+      "label": "Main Engine No. 2",
+      "type": "running_hour",
+      "sort_order": 2
+    },
+    {
+      "id": "rh-auxiliary-engine-no-1",
+      "label": "Auxiliary Engine No. 1",
+      "type": "running_hour",
+      "sort_order": 3
+    },
+    {
+      "id": "rh-auxiliary-engine-no-2",
+      "label": "Auxiliary Engine No. 2",
+      "type": "running_hour",
+      "sort_order": 4
+    },
+    {
+      "id": "rh-srp-unit-no-1",
+      "label": "SRP Unit No. 1",
+      "type": "running_hour",
+      "sort_order": 5
+    },
+    {
+      "id": "rh-srp-unit-no-2",
+      "label": "SRP Unit No. 2",
+      "type": "running_hour",
+      "sort_order": 6
+    },
+    {
+      "id": "rh-harbour-generator",
+      "label": "Harbour Generator",
+      "type": "running_hour",
+      "sort_order": 7
+    },
+    {
+      "id": "rh-ext-fire-fighting-pump-engine",
+      "label": "Ext. Fire Fighting Pump Engine",
+      "type": "running_hour",
+      "sort_order": 8
+    }
+  ],
+  "other_comments": {
+    "id": "other-comments",
+    "label": "Other Comments",
+    "type": "textarea"
+  }
 }

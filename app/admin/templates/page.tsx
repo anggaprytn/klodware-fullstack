@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AdminShell } from "../AdminShell";
 import {
+  countTemplateItems,
   loadChecklistTemplateFile,
   seedChecklistTemplate,
 } from "@/lib/checklist-template";
@@ -48,6 +49,12 @@ export default async function AdminTemplatesPage({
     .collection("checklist_templates")
     .getFullList<ChecklistTemplateRecord>({ sort: "-active,-version,name" });
   const sourceTemplate = await loadChecklistTemplateFile();
+  const sourceItemsCount = countTemplateItems(sourceTemplate);
+  const sourceExtractionStatus =
+    sourceTemplate.source?.checklist_extraction_status ??
+    (sourceTemplate.sections.length >= 29 && sourceItemsCount >= 150
+      ? "complete"
+      : "incomplete");
 
   let selected = templates[0] ?? null;
   if (selectedId) {
@@ -73,7 +80,7 @@ export default async function AdminTemplatesPage({
           <dl className="detail-list">
             <div>
               <dt>Template</dt>
-              <dd>{sourceTemplate.template_id}</dd>
+              <dd>{sourceTemplate.id}</dd>
             </div>
             <div>
               <dt>Name</dt>
@@ -85,7 +92,13 @@ export default async function AdminTemplatesPage({
             </div>
             <div>
               <dt>Extraction</dt>
-              <dd>{sourceTemplate.source?.checklist_extraction_status ?? "unknown"}</dd>
+              <dd>{sourceExtractionStatus}</dd>
+            </div>
+            <div>
+              <dt>Sections / Items</dt>
+              <dd>
+                {sourceTemplate.sections.length} / {sourceItemsCount}
+              </dd>
             </div>
           </dl>
           {message ? <p className="notice">{message}</p> : null}
@@ -108,38 +121,55 @@ export default async function AdminTemplatesPage({
                   <th>Version</th>
                   <th>Checksum</th>
                   <th>Status</th>
-                  <th>Counts</th>
+                  <th>Sections</th>
+                  <th>Items</th>
+                  <th>Validity</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {templates.map((template) => (
-                  <tr key={template.id}>
-                    <td>{template.template_id}</td>
-                    <td>{template.name}</td>
-                    <td>{template.version}</td>
-                    <td className="checksum">{template.checksum}</td>
-                    <td>
-                      <span
-                        className={`status-pill ${
-                          template.active === true || template.is_active === true
-                            ? "active"
-                            : "inactive"
-                        }`}
-                      >
-                        {template.active === true || template.is_active === true
-                          ? "active"
-                          : "inactive"}
-                      </span>
-                    </td>
-                    <td>
-                      {template.sections_count ?? 0} / {template.items_count ?? 0}
-                    </td>
-                    <td>
-                      <Link href={`/admin/templates?id=${template.id}`}>View</Link>
-                    </td>
-                  </tr>
-                ))}
+                {templates.map((template) => {
+                  const sectionsCount = template.sections_count ?? 0;
+                  const itemsCount = template.items_count ?? 0;
+                  const active =
+                    template.active === true || template.is_active === true;
+                  const incomplete = sectionsCount < 29 || itemsCount < 150;
+
+                  return (
+                    <tr
+                      className={incomplete ? "incomplete-row" : undefined}
+                      key={template.id}
+                    >
+                      <td>{template.template_id}</td>
+                      <td>{template.name}</td>
+                      <td>{template.version}</td>
+                      <td className="checksum">{template.checksum}</td>
+                      <td>
+                        <span
+                          className={`status-pill ${
+                            active ? "active" : "inactive"
+                          }`}
+                        >
+                          {active ? "active" : "inactive"}
+                        </span>
+                      </td>
+                      <td>{sectionsCount}</td>
+                      <td>{itemsCount}</td>
+                      <td>
+                        <span
+                          className={`status-pill ${
+                            incomplete ? "warning" : "active"
+                          }`}
+                        >
+                          {incomplete ? "incomplete" : "valid"}
+                        </span>
+                      </td>
+                      <td>
+                        <Link href={`/admin/templates?id=${template.id}`}>View</Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -173,6 +203,15 @@ export default async function AdminTemplatesPage({
                 <dt>Sections / Items</dt>
                 <dd>
                   {selected.sections_count ?? 0} / {selected.items_count ?? 0}
+                </dd>
+              </div>
+              <div>
+                <dt>Validity</dt>
+                <dd>
+                  {(selected.sections_count ?? 0) < 29 ||
+                  (selected.items_count ?? 0) < 150
+                    ? "incomplete"
+                    : "valid"}
                 </dd>
               </div>
             </dl>

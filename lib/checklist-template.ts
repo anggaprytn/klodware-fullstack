@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type PocketBase from "pocketbase";
@@ -8,6 +9,11 @@ import type { ChecklistTemplateRecord } from "./types";
 export const SUPERINTENDENT_TEMPLATE_PATH = path.resolve(
   process.cwd(),
   "templates/superintendent-monthly-v1.json",
+);
+
+export const SUPERINTENDENT_CHECKLIST_PDF_PATH = path.resolve(
+  process.cwd(),
+  "docs/reference/5.7-superintendent-monthly-inspection-checklist-v1.2.pdf",
 );
 
 type RatingOption = {
@@ -20,7 +26,7 @@ type RatingOption = {
 type TemplateItem = {
   id?: string;
   item_template_id?: string;
-  label: string;
+  label?: string;
   type?: string;
   section_code?: string;
   sort_order?: number;
@@ -28,27 +34,54 @@ type TemplateItem = {
 };
 
 type TemplateSection = {
-  code: string;
-  title: string;
+  code?: string;
+  name?: string;
+  title?: string;
+  sort_order?: number;
   items: TemplateItem[];
 };
 
+type RunningHourItem = {
+  id?: string;
+  label?: string;
+  type?: string;
+  sort_order?: number;
+};
+
+type OtherComments = {
+  id?: string;
+  label?: string;
+  type?: string;
+};
+
 export type ChecklistTemplateSource = {
-  template_id: string;
+  id?: string;
+  template_id?: string;
   type?: string;
   version: number;
   name: string;
+  photo_policy?: unknown;
   source?: {
     checklist_extraction_status?: string;
     [key: string]: unknown;
   };
-  rating_options: RatingOption[];
-  sections: TemplateSection[];
+  rating_options?: RatingOption[];
+  sections?: TemplateSection[];
+  running_hours?: RunningHourItem[];
+  other_comments?: OtherComments;
 };
 
-export type NormalizedChecklistTemplate = ChecklistTemplateSource & {
+export type NormalizedChecklistTemplate = Omit<
+  ChecklistTemplateSource,
+  "id" | "template_id" | "rating_options" | "sections" | "running_hours"
+> & {
+  id: string;
+  template_id: string;
   type: string;
-  sections: TemplateSection[];
+  rating_options: RatingOption[];
+  sections: Array<TemplateSection & { code: string; name: string }>;
+  running_hours: RunningHourItem[];
+  other_comments?: OtherComments;
 };
 
 export function stableStringify(value: unknown): string {
@@ -78,20 +111,94 @@ export function countTemplateItems(template: NormalizedChecklistTemplate) {
   );
 }
 
-function validateCompleteTemplate(template: NormalizedChecklistTemplate) {
+export function validateCompleteTemplate(template: NormalizedChecklistTemplate) {
   const errors: string[] = [];
+  const itemIds = new Set<string>();
+  const requiredRatings = new Set(["1", "2", "3", "4", "NA"]);
+  const sectionsCount = template.sections.length;
+  const itemsCount = countTemplateItems(template);
+
+  if (!template.id || !template.template_id) {
+    errors.push("Template must have an id.");
+  }
+
+  if (sectionsCount < 29) {
+    errors.push(`Template must have at least 29 sections; found ${sectionsCount}.`);
+  }
+
+  if (itemsCount < 150) {
+    errors.push(
+      `Template must have at least 150 normal checklist items; found ${itemsCount}.`,
+    );
+  }
+
+  if (!Array.isArray(template.rating_options) || template.rating_options.length === 0) {
+    errors.push("Template rating options are missing.");
+  } else {
+    for (const option of template.rating_options) {
+      requiredRatings.delete(option.value);
+    }
+
+    if (requiredRatings.size > 0) {
+      errors.push(
+        `Template rating options are missing values: ${[...requiredRatings].join(", ")}.`,
+      );
+    }
+  }
+
+  if (
+    !Array.isArray(template.running_hours) ||
+    template.running_hours.length === 0
+  ) {
+    errors.push("Template running_hours is missing.");
+  } else {
+    for (const runningHour of template.running_hours) {
+      if (
+        !runningHour.id ||
+        !runningHour.label ||
+        runningHour.type !== "running_hour" ||
+        !runningHour.sort_order
+      ) {
+        errors.push(
+          `Running hour ${runningHour.id ?? "unknown"} is missing id, label, type, or sort_order.`,
+        );
+      }
+    }
+  }
+
+  if (
+    !template.other_comments ||
+    !template.other_comments.id ||
+    !template.other_comments.label ||
+    template.other_comments.type !== "textarea"
+  ) {
+    errors.push("Template other_comments is missing.");
+  }
 
   for (const section of template.sections) {
-    if (!section.code || !section.title) {
-      errors.push("Each section must have code and title.");
+    if (!section.code) {
+      errors.push("Each section must have a code.");
+    }
+
+    if (!section.name) {
+      errors.push(`Section ${section.code ?? "unknown"} must have a name.`);
     }
 
     for (const item of section.items) {
       if (!item.id) {
         errors.push(`Section ${section.code} has an item without a stable id.`);
+      } else if (itemIds.has(item.id)) {
+        errors.push(`Duplicate checklist item id: ${item.id}.`);
+      } else {
+        itemIds.add(item.id);
       }
 
-      if (!item.label || !item.type || !item.section_code || !item.sort_order) {
+      if (
+        !item.label ||
+        item.type !== "rating_item" ||
+        !item.section_code ||
+        !item.sort_order
+      ) {
         errors.push(
           `Item ${item.id ?? "unknown"} is missing label, type, section_code, or sort_order.`,
         );
@@ -105,24 +212,44 @@ function validateCompleteTemplate(template: NormalizedChecklistTemplate) {
 }
 
 export function isTemplateExtractionComplete(template: ChecklistTemplateSource) {
-  return template.source?.checklist_extraction_status === "complete";
+  if (template.source?.checklist_extraction_status === "complete") {
+    return true;
+  }
+
+  return Boolean(
+    template.sections?.length &&
+      template.rating_options?.length &&
+      template.running_hours?.length &&
+      template.other_comments,
+  );
 }
 
 export function normalizeTemplate(
   source: ChecklistTemplateSource,
 ): NormalizedChecklistTemplate {
+  const templateId = source.id ?? source.template_id ?? "";
+
   return {
     ...source,
-    type: source.type ?? "superintendent-monthly",
-    sections: source.sections.map((section, sectionIndex) => ({
+    id: templateId,
+    template_id: templateId,
+    type: source.type ?? "superintendent_monthly",
+    rating_options: source.rating_options ?? [],
+    running_hours: (source.running_hours ?? []).map((runningHour, index) => ({
+      ...runningHour,
+      type: runningHour.type ?? "running_hour",
+      sort_order: runningHour.sort_order ?? index + 1,
+    })),
+    sections: (source.sections ?? []).map((section, sectionIndex) => ({
       ...section,
+      code: section.code ?? "",
+      name: section.name ?? section.title ?? "",
       items: section.items.map((item, itemIndex) => {
         const id = item.id ?? item.item_template_id;
         return {
           ...item,
           id,
-          item_template_id: id,
-          type: item.type ?? "rating",
+          type: item.type ?? "rating_item",
           section_code: item.section_code ?? section.code,
           sort_order: item.sort_order ?? itemIndex + 1,
         };
@@ -137,6 +264,14 @@ export async function loadChecklistTemplateFile(
 ) {
   const raw = await readFile(templatePath, "utf8");
   return normalizeTemplate(JSON.parse(raw) as ChecklistTemplateSource);
+}
+
+function ensureChecklistPdfExists() {
+  if (!existsSync(SUPERINTENDENT_CHECKLIST_PDF_PATH)) {
+    throw new Error(
+      "Checklist PDF is missing from repo. Please add it to docs/reference before full extraction.",
+    );
+  }
 }
 
 async function hasInspectionsForTemplate(
@@ -170,6 +305,10 @@ export async function seedChecklistTemplate({
 } = {}) {
   const pb = await getSuperuserPocketBase();
   const template = await loadChecklistTemplateFile(templatePath);
+
+  if (requireCompleteExtraction) {
+    ensureChecklistPdfExists();
+  }
 
   if (requireCompleteExtraction && !isTemplateExtractionComplete(template)) {
     throw new Error(
@@ -226,7 +365,13 @@ export async function seedChecklistTemplate({
       }
     }
 
-    if (existing.checksum === checksum && existing.active === true) {
+    if (
+      existing.checksum === checksum &&
+      existing.active === true &&
+      existing.is_active === true &&
+      existing.sections_count === sectionsCount &&
+      existing.items_count === itemsCount
+    ) {
       record = existing;
       action = "unchanged";
     } else {
@@ -247,8 +392,9 @@ export async function seedChecklistTemplate({
   }
 
   const activeFilter = pb.filter(
-    "type = {:type} && active = true && id != {:id}",
+    "(template_id = {:templateId} || type = {:type} || type = 'superintendent-monthly' || type = 'superintendent_monthly') && (active = true || is_active = true) && id != {:id}",
     {
+      templateId: template.template_id,
       type: template.type,
       id: record.id,
     },
@@ -266,6 +412,23 @@ export async function seedChecklistTemplate({
     ),
   );
 
+  const zeroItemActiveFilter = pb.filter(
+    "(template_id = {:templateId} || type = {:type} || type = 'superintendent-monthly' || type = 'superintendent_monthly') && (active = true || is_active = true) && items_count = 0",
+    {
+      templateId: template.template_id,
+      type: template.type,
+    },
+  );
+  const zeroItemActiveTemplates = await pb
+    .collection("checklist_templates")
+    .getFullList<ChecklistTemplateRecord>({ filter: zeroItemActiveFilter });
+
+  if (zeroItemActiveTemplates.length > 0) {
+    throw new Error(
+      "Active superintendent monthly templates with items_count: 0 still exist after seeding.",
+    );
+  }
+
   return {
     action,
     record,
@@ -273,5 +436,6 @@ export async function seedChecklistTemplate({
     sectionsCount,
     itemsCount,
     deactivatedCount: activeTemplates.length,
+    zeroItemActiveCount: zeroItemActiveTemplates.length,
   };
 }

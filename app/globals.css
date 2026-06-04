@@ -259,6 +259,12 @@ select {
   color: #475467;
 }
 
+.status-pill.warning {
+  background: #fff4e5;
+  border-color: #fedf89;
+  color: #b54708;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -280,6 +286,10 @@ select {
 .data-table th {
   color: #30363d;
   font-size: 13px;
+}
+
+.data-table tr.incomplete-row td {
+  background: #fffaf2;
 }
 
 .checksum {

@@ -10,6 +10,7 @@ import type {
   ChecklistTemplateRecord,
   InspectionPhotoRecord,
   InspectionRecord,
+  PdfStatus,
   PdfReportRecord,
   UserRecord,
   VesselRecord,
@@ -145,28 +146,74 @@ export async function inspectionPhotos(pb: PocketBase, inspectionId: string) {
 }
 
 export async function findPdfReport(pb: PocketBase, inspectionId: string) {
-  const filter = pb.filter("inspection = {:inspectionId}", { inspectionId });
-  try {
-    return await pb
-      .collection("pdf_reports")
-      .getFirstListItem<PdfReportRecord>(filter);
-  } catch (error) {
-    if (isPocketBaseResponseError(error) && error.status === 404) {
-      return null;
-    }
-    throw error;
-  }
+  const [report] = await findPdfReports(pb, inspectionId);
+  return report ?? null;
+}
+
+export async function findPdfReports(pb: PocketBase, inspectionId: string) {
+  const reports = await pb.collection("pdf_reports").getFullList<PdfReportRecord>({
+    filter: pb.filter("inspection.id = {:inspectionId}", { inspectionId }),
+  });
+  return reports.sort((a, b) => {
+    const left = Date.parse(a.updated ?? a.created ?? "");
+    const right = Date.parse(b.updated ?? b.created ?? "");
+    return right - left;
+  });
+}
+
+export function isSubmittedInspection(inspection: InspectionRecord) {
+  return Boolean(
+    inspection.locked_at ||
+      inspection.status === "submitted" ||
+      inspection.status === "locked",
+  );
+}
+
+export function readyPdfReportHasFile(
+  report: PdfReportRecord | null,
+): report is PdfReportRecord & { file: string; file_size_bytes: number } {
+  return Boolean(
+    report &&
+      report.status === "ready" &&
+      report.file &&
+      (report.file_size_bytes ?? 0) > 0,
+  );
+}
+
+export async function setInspectionPdfStatus(
+  pb: PocketBase,
+  inspectionId: string,
+  pdfStatus: PdfStatus,
+) {
+  return pb.collection("inspections").update<InspectionRecord>(inspectionId, {
+    pdf_status: pdfStatus,
+  });
 }
 
 export async function ensureQueuedPdfReport(pb: PocketBase, inspectionId: string) {
-  const existing = await findPdfReport(pb, inspectionId);
+  const reports = await findPdfReports(pb, inspectionId);
+  const [existing, ...duplicates] = reports;
+
+  await Promise.all(
+    duplicates
+      .filter((report) => report.status !== "failed")
+      .map((report) =>
+        pb.collection("pdf_reports").update(report.id, {
+          status: "failed",
+          error_message: "Superseded by current PDF report.",
+        }),
+      ),
+  );
+
   if (existing) {
     return pb.collection("pdf_reports").update<PdfReportRecord>(existing.id, {
       status: "queued",
+      file_size_bytes: 0,
+      generated_at: "",
       error_message: "",
       metadata_json: {
         queued_at: new Date().toISOString(),
-        phase: "2B",
+        phase: "2C",
       },
     });
   }
@@ -174,9 +221,10 @@ export async function ensureQueuedPdfReport(pb: PocketBase, inspectionId: string
   return pb.collection("pdf_reports").create<PdfReportRecord>({
     inspection: inspectionId,
     status: "queued",
+    file_size_bytes: 0,
     metadata_json: {
       queued_at: new Date().toISOString(),
-      phase: "2B",
+      phase: "2C",
     },
   });
 }

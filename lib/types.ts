@@ -100,6 +100,7 @@ export type PdfReportRecord = RecordModel & {
   inspection: string;
   status: Exclude<PdfStatus, "not_requested">;
   file?: string;
+  file_size_bytes?: number;
   generated_at?: string;
   error_message?: string;
   metadata_json?: unknown;

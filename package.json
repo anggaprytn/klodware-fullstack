@@ -14,7 +14,8 @@
     "build": "next build",
     "setup:pocketbase": "tsx scripts/setup-pocketbase.ts",
     "seed:template": "tsx scripts/seed-template.ts",
-    "seed:vessels": "tsx scripts/seed-vessels.ts"
+    "seed:vessels": "tsx scripts/seed-vessels.ts",
+    "worker:pdf": "tsx scripts/pdf-worker.ts"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "homepage": "https://github.com/anggaprytn/klodware-fullstack#readme",
   "dependencies": {
     "next": "^16.2.7",
+    "playwright": "^1.60.0",
     "pocketbase": "^0.27.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

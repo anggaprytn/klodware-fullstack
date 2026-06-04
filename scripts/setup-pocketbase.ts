@@ -365,6 +365,7 @@ async function buildSpecs(): Promise<CollectionSpec[]> {
         relation("inspection", inspectionCollectionId, true),
         select("status", ["queued", "generating", "ready", "failed"], true),
         file("file"),
+        number("file_size_bytes"),
         date("generated_at"),
         text("error_message"),
         json("metadata_json"),

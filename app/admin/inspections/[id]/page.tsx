@@ -1,14 +1,52 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { AdminShell } from "../../AdminShell";
 import { requireAdminSession } from "@/lib/auth";
 import {
+  findPdfReport,
   getInspectionOrThrow,
   getTemplateForInspection,
   inspectionPhotos,
   toMobileInspectionDetail,
 } from "@/lib/inspections";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
-import type { SyncEventRecord } from "@/lib/types";
+import { canGeneratePdfDownloadToken } from "@/lib/pdf/pdf-token";
+import { buildPdfDownloadUrl } from "@/lib/pdf/report-access";
+import { requestPdfRegeneration } from "@/lib/pdf/report-lifecycle";
+import type { PdfReportRecord, SyncEventRecord } from "@/lib/types";
+
+function signedDownloadHref(report: PdfReportRecord | null) {
+  if (
+    !report ||
+    !canGeneratePdfDownloadToken() ||
+    report.status !== "ready" ||
+    !report.file
+  ) {
+    return null;
+  }
+
+  return buildPdfDownloadUrl({
+    inspectionId: report.inspection,
+    pdfReportId: report.id,
+  }).url;
+}
+
+async function regeneratePdfAction(formData: FormData) {
+  "use server";
+
+  const session = await requireAdminSession();
+  const inspectionId = String(formData.get("inspection_id") ?? "");
+  const pb = await getSuperuserPocketBase();
+  const inspection = await getInspectionOrThrow(pb, inspectionId);
+  await requestPdfRegeneration({
+    pb,
+    inspection,
+    userId: session.user.id,
+    deviceId: inspection.device_id,
+  });
+  revalidatePath("/admin/reports");
+  revalidatePath(`/admin/inspections/${inspectionId}`);
+}
 
 export default async function AdminInspectionDetailPage({
   params,
@@ -19,13 +57,14 @@ export default async function AdminInspectionDetailPage({
   const { id } = await params;
   const pb = await getSuperuserPocketBase();
   const inspection = await getInspectionOrThrow(pb, id);
-  const [template, photos, rawEvents] = await Promise.all([
+  const [template, photos, rawEvents, pdfReport] = await Promise.all([
     getTemplateForInspection(pb, inspection),
     inspectionPhotos(pb, inspection.id),
     pb.collection("sync_events").getList<SyncEventRecord>(1, 80, {
       filter: pb.filter("user = {:userId}", { userId: inspection.user }),
       sort: "-occurred_at",
     }),
+    findPdfReport(pb, inspection.id),
   ]);
   const detail = toMobileInspectionDetail({ inspection, template, photos });
   const events = rawEvents.items.filter((event) => {
@@ -54,6 +93,7 @@ export default async function AdminInspectionDetailPage({
         }>;
       }
     | null;
+  const downloadHref = signedDownloadHref(pdfReport);
 
   return (
     <AdminShell
@@ -89,6 +129,56 @@ export default async function AdminInspectionDetailPage({
               </dd>
             </div>
           </dl>
+        </section>
+
+        <section className="panel">
+          <h2>PDF Report</h2>
+          <dl className="detail-list">
+            <div>
+              <dt>Inspection PDF Status</dt>
+              <dd>{inspection.pdf_status}</dd>
+            </div>
+            <div>
+              <dt>Report Status</dt>
+              <dd>{pdfReport?.status ?? "not_requested"}</dd>
+            </div>
+            <div>
+              <dt>Report</dt>
+              <dd className="checksum">{pdfReport?.id ?? ""}</dd>
+            </div>
+            <div>
+              <dt>File Size</dt>
+              <dd>{pdfReport?.file_size_bytes ?? 0}</dd>
+            </div>
+            <div>
+              <dt>Generated</dt>
+              <dd>{pdfReport?.generated_at ?? ""}</dd>
+            </div>
+            {pdfReport?.error_message ? (
+              <div>
+                <dt>PDF Error</dt>
+                <dd className="error">{pdfReport.error_message}</dd>
+              </div>
+            ) : null}
+          </dl>
+          <div className="row-actions">
+            {downloadHref ? (
+              <Link className="button secondary" href={downloadHref}>
+                Download PDF
+              </Link>
+            ) : null}
+            <form action={regeneratePdfAction}>
+              <input name="inspection_id" type="hidden" value={inspection.id} />
+              <button className="button" type="submit">
+                Regenerate PDF
+              </button>
+            </form>
+          </div>
+          {!downloadHref && pdfReport?.status === "ready" ? (
+            <p className="muted">
+              Set PDF_DOWNLOAD_SECRET to enable signed admin download links.
+            </p>
+          ) : null}
         </section>
 
         <section className="metric-grid">

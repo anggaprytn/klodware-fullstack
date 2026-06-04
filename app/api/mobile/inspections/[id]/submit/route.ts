@@ -145,19 +145,33 @@ export async function POST(
     });
     const report = await ensureQueuedPdfReport(pb, updated.id);
 
-    await logSyncEvent({
-      userId: auth.user.id,
-      deviceId,
-      requestId,
-      eventType: "inspection_submit_success",
-      status: "success",
-      retryable: false,
-      payload: {
-        inspection_id: updated.id,
-        pdf_report_id: report.id,
-        status: "submitted",
-      },
-    });
+    await Promise.all([
+      logSyncEvent({
+        userId: auth.user.id,
+        deviceId,
+        requestId,
+        eventType: "inspection_submit_success",
+        status: "success",
+        retryable: false,
+        payload: {
+          inspection_id: updated.id,
+          pdf_report_id: report.id,
+          status: "submitted",
+        },
+      }),
+      logSyncEvent({
+        userId: auth.user.id,
+        deviceId,
+        requestId,
+        eventType: "pdf_queued",
+        status: "success",
+        retryable: false,
+        payload: {
+          inspection_id: updated.id,
+          pdf_report_id: report.id,
+        },
+      }),
+    ]);
 
     return mobileSuccess({
       inspection_id: updated.id,

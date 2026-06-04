@@ -8,6 +8,13 @@ const envSchema = z.object({
   PB_SUPERUSER_PASSWORD: z.string().min(1),
   APP_BASE_URL: z.string().url(),
   MAX_INSPECTION_PHOTO_BYTES: z.coerce.number().int().positive().optional(),
+  PDF_WORKER_ENABLED: z
+    .enum(["true", "false", "1", "0"])
+    .optional()
+    .transform((value) => value !== "false" && value !== "0"),
+  PDF_DOWNLOAD_TTL_MINUTES: z.coerce.number().int().positive().default(15),
+  PDF_DOWNLOAD_SECRET: z.string().optional(),
+  PDF_STUCK_GENERATING_MINUTES: z.coerce.number().int().positive().default(15),
   ADMIN_USERNAME: z.string().optional(),
   ADMIN_PASSWORD: z.string().optional(),
 });

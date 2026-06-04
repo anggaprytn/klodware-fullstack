@@ -8,6 +8,10 @@ export type MobileErrorCode =
   | "USER_INACTIVE"
   | "SESSION_EXPIRED"
   | "NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "CONFLICT"
+  | "PAYLOAD_TOO_LARGE"
+  | "UNSUPPORTED_MEDIA_TYPE"
   | "RATE_LIMITED"
   | "INTERNAL_ERROR";
 

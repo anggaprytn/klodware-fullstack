@@ -7,6 +7,7 @@ const envSchema = z.object({
   PB_SUPERUSER_EMAIL: z.string().email(),
   PB_SUPERUSER_PASSWORD: z.string().min(1),
   APP_BASE_URL: z.string().url(),
+  MAX_INSPECTION_PHOTO_BYTES: z.coerce.number().int().positive().optional(),
   ADMIN_USERNAME: z.string().optional(),
   ADMIN_PASSWORD: z.string().optional(),
 });

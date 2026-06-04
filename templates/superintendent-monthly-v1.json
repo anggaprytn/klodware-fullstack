@@ -1,0 +1,106 @@
+{
+  "template_id": "superintendent-monthly-v1",
+  "version": 1,
+  "name": "Superintendent Monthly Inspection Checklist",
+  "source": {
+    "prd": "docs/PRD.md",
+    "referenced_pdf": "attachments/ec275675-30cb-419d-853d-af67979f214e.pdf",
+    "checklist_extraction_status": "TODO",
+    "todo": "Extract the complete item catalog from the referenced Superintendent Monthly Inspection Checklist PDF, assign stable item_template_id values, and replace the placeholder items below before production use."
+  },
+  "rating_options": [
+    {
+      "value": "1",
+      "label": "Good / Acceptable",
+      "requires_remarks": false,
+      "requires_photo": false
+    },
+    {
+      "value": "2",
+      "label": "Fair",
+      "requires_remarks": false,
+      "requires_photo": false
+    },
+    {
+      "value": "3",
+      "label": "Poor / Needs Action",
+      "requires_remarks": true,
+      "requires_photo": true
+    },
+    {
+      "value": "4",
+      "label": "Drydock Item",
+      "requires_remarks": true,
+      "requires_photo": true
+    },
+    {
+      "value": "NA",
+      "label": "Not Applicable",
+      "requires_remarks": false,
+      "requires_photo": false
+    }
+  ],
+  "sections": [
+    {
+      "code": "10",
+      "title": "Shell and Hull",
+      "items": [
+        {
+          "item_template_id": "10-draft-mark",
+          "label": "Draft mark condition",
+          "requires_score": true
+        }
+      ]
+    },
+    {
+      "code": "20",
+      "title": "Deck and Fittings",
+      "items": []
+    },
+    {
+      "code": "30",
+      "title": "Cargo Equipment",
+      "items": []
+    },
+    {
+      "code": "40",
+      "title": "Mooring and Anchoring",
+      "items": []
+    },
+    {
+      "code": "50",
+      "title": "Engine Room",
+      "items": []
+    },
+    {
+      "code": "60",
+      "title": "Safety and Firefighting",
+      "items": []
+    },
+    {
+      "code": "70",
+      "title": "Navigation and Communication",
+      "items": []
+    },
+    {
+      "code": "80",
+      "title": "Accommodation and Sanitation",
+      "items": []
+    },
+    {
+      "code": "90",
+      "title": "Pollution Prevention",
+      "items": []
+    },
+    {
+      "code": "100",
+      "title": "Running Hours",
+      "items": []
+    },
+    {
+      "code": "110",
+      "title": "Other Comments",
+      "items": []
+    }
+  ]
+}

@@ -8,6 +8,7 @@ export type MobileErrorCode =
   | "USER_INACTIVE"
   | "SESSION_EXPIRED"
   | "NOT_FOUND"
+  | "RATE_LIMITED"
   | "INTERNAL_ERROR";
 
 type ErrorPayload = {

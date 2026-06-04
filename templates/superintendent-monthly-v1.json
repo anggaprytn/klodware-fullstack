@@ -1,12 +1,14 @@
 {
   "template_id": "superintendent-monthly-v1",
+  "type": "superintendent-monthly",
   "version": 1,
   "name": "Superintendent Monthly Inspection Checklist",
   "source": {
     "prd": "docs/PRD.md",
-    "referenced_pdf": "attachments/ec275675-30cb-419d-853d-af67979f214e.pdf",
-    "checklist_extraction_status": "TODO",
-    "todo": "Extract the complete item catalog from the referenced Superintendent Monthly Inspection Checklist PDF, assign stable item_template_id values, and replace the placeholder items below before production use."
+    "expected_pdf": "docs/reference/5.7-superintendent-monthly-inspection-checklist-v1.2.pdf",
+    "reference_userguide": "docs/reference/ship-maintenance-userguide.pdf",
+    "checklist_extraction_status": "missing_source_pdf",
+    "note": "Checklist PDF is missing from repo. Please add it to docs/reference before full extraction."
   },
   "rating_options": [
     {
@@ -43,62 +45,161 @@
   "sections": [
     {
       "code": "10",
-      "title": "Shell and Hull",
-      "items": [
-        {
-          "item_template_id": "10-draft-mark",
-          "label": "Draft mark condition",
-          "requires_score": true
-        }
-      ]
-    },
-    {
-      "code": "20",
-      "title": "Deck and Fittings",
+      "title": "Shell",
       "items": []
     },
     {
-      "code": "30",
-      "title": "Cargo Equipment",
+      "code": "12",
+      "title": "Deck",
       "items": []
     },
     {
-      "code": "40",
-      "title": "Mooring and Anchoring",
+      "code": "14",
+      "title": "Accommodation",
       "items": []
     },
     {
-      "code": "50",
-      "title": "Engine Room",
+      "code": "21",
+      "title": "Windlass & Mooring Winch",
       "items": []
     },
     {
-      "code": "60",
-      "title": "Safety and Firefighting",
+      "code": "23",
+      "title": "Steering Gear / Azimuth Propeller",
       "items": []
     },
     {
-      "code": "70",
-      "title": "Navigation and Communication",
+      "code": "24",
+      "title": "Electrical Deck",
       "items": []
     },
     {
-      "code": "80",
-      "title": "Accommodation and Sanitation",
+      "code": "32",
+      "title": "Pumps / Stripping Device",
       "items": []
     },
     {
-      "code": "90",
-      "title": "Pollution Prevention",
+      "code": "33",
+      "title": "Windlass / Towing Winch Hydraulic System",
       "items": []
     },
     {
-      "code": "100",
-      "title": "Running Hours",
+      "code": "35",
+      "title": "Pipes",
       "items": []
     },
     {
-      "code": "110",
+      "code": "41",
+      "title": "Navigation Instrument",
+      "items": []
+    },
+    {
+      "code": "42",
+      "title": "Radio Equipment / Communication",
+      "items": []
+    },
+    {
+      "code": "43",
+      "title": "Publication",
+      "items": []
+    },
+    {
+      "code": "53",
+      "title": "Life Raft",
+      "items": []
+    },
+    {
+      "code": "54",
+      "title": "Other Life Saving Appliance",
+      "items": []
+    },
+    {
+      "code": "55",
+      "title": "Fire Fighting",
+      "items": []
+    },
+    {
+      "code": "57",
+      "title": "Bilge, Waste Oil Control",
+      "items": []
+    },
+    {
+      "code": "58",
+      "title": "Bunkering Procedure",
+      "items": []
+    },
+    {
+      "code": "59",
+      "title": "Pollution Prevention Material",
+      "items": []
+    },
+    {
+      "code": "61",
+      "title": "Main Engine / Propulsion",
+      "items": []
+    },
+    {
+      "code": "62",
+      "title": "Diesel Generator",
+      "items": []
+    },
+    {
+      "code": "71",
+      "title": "Auxiliary Machinery",
+      "items": []
+    },
+    {
+      "code": "72",
+      "title": "Ventilation, Air Conditioning & Refrigeration Systems",
+      "items": []
+    },
+    {
+      "code": "73",
+      "title": "Electrical Engine Room",
+      "items": []
+    },
+    {
+      "code": "74",
+      "title": "Engine Structure",
+      "items": []
+    },
+    {
+      "code": "75",
+      "title": "Fire, Safety & Environmental Equipment",
+      "items": []
+    },
+    {
+      "code": "81",
+      "title": "Security",
+      "items": []
+    },
+    {
+      "code": "82",
+      "title": "Ship Certificates",
+      "items": []
+    },
+    {
+      "code": "84",
+      "title": "Records",
+      "items": []
+    },
+    {
+      "code": "85",
+      "title": "Management General & Deck Department",
+      "items": []
+    },
+    {
+      "code": "86",
+      "title": "Management Engine Department",
+      "items": []
+    },
+    {
+      "code": "RH",
+      "title": "Machinery Total Running Hours",
+      "items": []
+    },
+    {
+      "code": "OC",
       "title": "Other Comments",
       "items": []
     }

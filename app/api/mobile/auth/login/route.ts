@@ -1,5 +1,6 @@
 import { AuthError, authenticateMobileLogin, toMobileUserProfile } from "@/lib/auth";
 import { mobileError, mobileSuccess } from "@/lib/mobile-response";
+import { checkLoginRateLimit, clearLoginRateLimit } from "@/lib/rate-limit";
 import { mobileLoginSchema } from "@/lib/validation/mobile-auth";
 
 export const runtime = "nodejs";
@@ -27,11 +28,29 @@ export async function POST(request: Request) {
     });
   }
 
+  const limit = checkLoginRateLimit(request, parsed.data.username);
+  if (limit.limited) {
+    return mobileError(
+      429,
+      {
+        code: "RATE_LIMITED",
+        message: "Too many login attempts. Please try again later.",
+        retryable: true,
+      },
+      {
+        headers: {
+          "Retry-After": String(limit.retryAfterSeconds),
+        },
+      },
+    );
+  }
+
   try {
     const auth = await authenticateMobileLogin(
       parsed.data.username,
       parsed.data.password,
     );
+    clearLoginRateLimit(request, parsed.data.username);
 
     return mobileSuccess({
       access_token: auth.token,

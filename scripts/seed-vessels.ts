@@ -4,6 +4,11 @@ const devVessel = {
   name: "Klodware Dev Vessel",
   code: "DEV-001",
   imo_no: "0000001",
+  imo: "0000001",
+  mmsi: "525000001",
+  call_sign: "KLOD",
+  flag: "Indonesia",
+  year_built: 2020,
   type: "general_cargo",
   status: "active",
   metadata_json: {

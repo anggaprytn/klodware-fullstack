@@ -29,7 +29,8 @@ a {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -112,6 +113,11 @@ input {
   gap: 16px;
 }
 
+.admin-grid {
+  display: grid;
+  gap: 18px;
+}
+
 .metric-grid {
   display: grid;
   gap: 16px;
@@ -146,6 +152,11 @@ input {
   margin: 0 0 8px;
 }
 
+.panel h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+
 .form {
   display: grid;
   gap: 14px;
@@ -157,16 +168,25 @@ input {
   gap: 6px;
 }
 
-.field label {
+.form-grid {
+  align-items: end;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.field label,
+.field span {
   color: #30363d;
   font-size: 14px;
   font-weight: 600;
 }
 
-.field input {
+.field input,
+.field select,
+.inline-form input {
   border: 1px solid #bac3cd;
   border-radius: 6px;
   padding: 10px 12px;
+  width: 100%;
 }
 
 .button {
@@ -182,6 +202,124 @@ input {
 
 .button:hover {
   background: var(--accent-dark);
+}
+
+.button.secondary {
+  background: #30363d;
+}
+
+.button.danger {
+  background: var(--danger);
+}
+
+.crud-list {
+  display: grid;
+  gap: 14px;
+}
+
+.crud-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.inline-form {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(180px, 1fr) auto;
+}
+
+.row-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.status-pill {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 9px;
+  text-transform: uppercase;
+}
+
+.status-pill.active {
+  background: #e7f7f1;
+  color: #067647;
+}
+
+.status-pill.inactive {
+  background: #f2f4f7;
+  color: #475467;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  border-collapse: collapse;
+  min-width: 760px;
+  width: 100%;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  color: #30363d;
+  font-size: 13px;
+}
+
+.checksum {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.detail-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.detail-list div {
+  display: grid;
+  gap: 4px;
+}
+
+.detail-list dt {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.detail-list dd {
+  margin: 0;
+}
+
+.json-preview {
+  background: #111827;
+  border-radius: 8px;
+  color: #f9fafb;
+  max-height: 560px;
+  overflow: auto;
+  padding: 14px;
+}
+
+.notice {
+  color: var(--accent-dark);
 }
 
 .error {
@@ -202,5 +340,9 @@ input {
 
   .admin-main {
     padding: 24px 16px;
+  }
+
+  .inline-form {
+    grid-template-columns: 1fr;
   }
 }

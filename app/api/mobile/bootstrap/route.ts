@@ -1,4 +1,8 @@
 import { AuthError, requireMobileUser, toMobileUserProfile } from "@/lib/auth";
+import {
+  toMobileTemplateMetadata,
+  toMobileVessel,
+} from "@/lib/mobile-catalog";
 import { mobileError, mobileSuccess } from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import type { ChecklistTemplateRecord, VesselRecord } from "@/lib/types";
@@ -16,33 +20,27 @@ export async function GET(request: Request) {
         sort: "name",
       }),
       pb.collection("checklist_templates").getFullList<ChecklistTemplateRecord>({
-        filter: pb.filter("is_active = true"),
+        filter: pb.filter("active = true || is_active = true"),
         sort: "-version",
       }),
     ]);
+    const activeTemplate = templates[0] ?? null;
 
     return mobileSuccess({
-      user: toMobileUserProfile(auth.user),
-      vessels: vessels.map((vessel) => ({
-        id: vessel.id,
-        name: vessel.name,
-        code: vessel.code,
-        imo_no: vessel.imo_no ?? "",
-        status: vessel.status,
-      })),
-      checklist_templates: templates.map((template) => ({
-        id: template.id,
-        template_id: template.template_id,
-        version: template.version,
-        name: template.name,
-        checksum: template.checksum,
-        is_active: template.is_active,
-        rating_options: template.rating_options_json,
-        sections: template.sections_json,
-      })),
-      config: {
+      app_config: {
         api_contract: "mobile-rest-json-v1",
+        inspection_execution: "mobile-only",
       },
+      active_template: activeTemplate
+        ? toMobileTemplateMetadata(activeTemplate)
+        : null,
+      vessel_catalog: {
+        count: vessels.length,
+        active_only: true,
+      },
+      user: toMobileUserProfile(auth.user),
+      vessels: vessels.map(toMobileVessel),
+      server_time: new Date().toISOString(),
     });
   } catch (error) {
     if (error instanceof AuthError) {

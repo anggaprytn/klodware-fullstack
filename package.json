@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "next build",
@@ -36,6 +36,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "server-only": "^0.0.1",
+    "tsx": "^4.22.4",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -44,7 +45,6 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
-    "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }
 }

@@ -7,7 +7,7 @@ Coolify supports deploying Docker Compose applications directly from a compose f
 - `app`: Next.js web admin and mobile REST API, exposed on port `3000`.
 - `pdf-worker`: Playwright PDF worker, internal only.
 - `pocketbase`: PocketBase datastore, internal only on port `8090`.
-- `setup`: optional one-shot profile to create/verify collections and seed template/vessels.
+- `setup`: optional one-shot profile to repair collections and seed template/vessels manually.
 
 PocketBase must stay hidden behind Next.js route handlers. Do not assign a public domain to the `pocketbase` service for normal operation.
 
@@ -47,9 +47,11 @@ If your PocketBase version reports a different CLI command, use the command show
 /pb/pocketbase superuser --help
 ```
 
-## Run Setup And Seeds
+## Setup And Seeds
 
-After the first deploy, run the setup profile once from a terminal:
+The `app` service automatically creates or verifies collections and seeds the checklist template/vessels before starting Next.js. The `pdf-worker` waits for `app` to become healthy before scanning the PDF queue.
+
+If you ever need to repair setup manually, run the setup profile from a terminal:
 
 ```bash
 docker compose -f docker-compose.yml --profile setup run --rm setup

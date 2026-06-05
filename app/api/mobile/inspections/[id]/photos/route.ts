@@ -6,6 +6,7 @@ import {
   assertInspectionUnlocked,
   getInspectionOrThrow,
   getTemplateForInspection,
+  getVesselOrThrow,
   InspectionAccessError,
   itemBelongsToTemplate,
 } from "@/lib/inspections";
@@ -17,6 +18,7 @@ import {
 import { getSuperuserPocketBase, isPocketBaseResponseError } from "@/lib/pocketbase";
 import { deviceIdFrom, logSyncEvent, requestIdFrom } from "@/lib/sync-events";
 import type { InspectionPhotoRecord } from "@/lib/types";
+import { assertCanInspectVessel } from "@/lib/vessel-privileges";
 
 export const runtime = "nodejs";
 
@@ -169,6 +171,8 @@ export async function POST(
     const inspection = await getInspectionOrThrow(pb, id);
     assertInspectionAccess(inspection, auth.user);
     assertInspectionUnlocked(inspection);
+    const vessel = await getVesselOrThrow(pb, inspection.vessel);
+    assertCanInspectVessel(auth.user, vessel);
 
     const template = await getTemplateForInspection(pb, inspection);
     const templateItem = itemBelongsToTemplate(template, itemTemplateId);

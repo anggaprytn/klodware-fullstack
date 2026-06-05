@@ -81,6 +81,14 @@ const relation = (
   maxSelect: 1,
 });
 
+const relationMany = (name: string, collectionId: string): FieldSpec => ({
+  name,
+  type: "relation",
+  required: false,
+  collectionId,
+  maxSelect: 999,
+});
+
 async function getCollection(name: string) {
   const pb = await getSuperuserPocketBase();
 
@@ -280,23 +288,6 @@ async function buildSpecs(): Promise<CollectionSpec[]> {
 
   return [
     {
-      name: "users",
-      type: "auth",
-      fields: [
-        text("username", true),
-        text("full_name", true),
-        text("employee_no"),
-        select("role", ["admin", "inspector", "viewer"], true),
-        select("status", ["active", "inactive"], true),
-        json("metadata_json"),
-      ],
-      indexes: [
-        "CREATE UNIQUE INDEX idx_users_username ON users (username) WHERE username != ''",
-        "CREATE INDEX idx_users_role ON users (role)",
-        "CREATE INDEX idx_users_status ON users (status)",
-      ],
-    },
-    {
       name: "app_configs",
       type: "base",
       fields: [text("key", true), json("value_json", true), text("description")],
@@ -323,6 +314,24 @@ async function buildSpecs(): Promise<CollectionSpec[]> {
         "CREATE UNIQUE INDEX idx_vessels_code ON vessels (code)",
         "CREATE INDEX idx_vessels_imo ON vessels (imo)",
         "CREATE INDEX idx_vessels_status ON vessels (status)",
+      ],
+    },
+    {
+      name: "users",
+      type: "auth",
+      fields: [
+        text("username", true),
+        text("full_name", true),
+        text("employee_no"),
+        select("role", ["admin", "inspector", "viewer"], true),
+        select("status", ["active", "inactive"], true),
+        relationMany("inspectable_vessels", vesselCollectionId),
+        json("metadata_json"),
+      ],
+      indexes: [
+        "CREATE UNIQUE INDEX idx_users_username ON users (username) WHERE username != ''",
+        "CREATE INDEX idx_users_role ON users (role)",
+        "CREATE INDEX idx_users_status ON users (status)",
       ],
     },
     {

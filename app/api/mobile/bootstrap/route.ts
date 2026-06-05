@@ -6,7 +6,8 @@ import {
   mobileSuccess,
 } from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
-import type { ChecklistTemplateRecord, VesselRecord } from "@/lib/types";
+import type { ChecklistTemplateRecord } from "@/lib/types";
+import { getInspectableActiveVessels } from "@/lib/vessel-privileges";
 
 export const runtime = "nodejs";
 
@@ -16,10 +17,7 @@ export async function GET(request: Request) {
     const pb = await getSuperuserPocketBase();
 
     const [vessels, templates] = await Promise.all([
-      pb.collection("vessels").getFullList<VesselRecord>({
-        filter: pb.filter("status = {:status}", { status: "active" }),
-        sort: "name",
-      }),
+      getInspectableActiveVessels(pb, auth.user),
       pb.collection("checklist_templates").getFullList<ChecklistTemplateRecord>({
         filter: pb.filter("active = true || is_active = true"),
         sort: "-version",

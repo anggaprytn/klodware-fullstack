@@ -19,6 +19,7 @@ import {
 import { getSuperuserPocketBase, isPocketBaseResponseError } from "@/lib/pocketbase";
 import { deviceIdFrom, logSyncEvent, requestIdFrom } from "@/lib/sync-events";
 import type { InspectionRecord } from "@/lib/types";
+import { assertCanInspectVessel } from "@/lib/vessel-privileges";
 
 export const runtime = "nodejs";
 
@@ -96,6 +97,8 @@ export async function POST(request: Request) {
       getVesselOrThrow(pb, input.vessel_id),
       getTemplateForPayload(pb, input),
     ]);
+    assertCanInspectVessel(auth.user, vessel);
+
     const itemErrors = validateItemIdsBelongToTemplate(input, template);
 
     if (itemErrors.length > 0) {

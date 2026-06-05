@@ -22,6 +22,7 @@ import {
 } from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { deviceIdFrom, logSyncEvent, requestIdFrom } from "@/lib/sync-events";
+import { assertCanInspectVessel } from "@/lib/vessel-privileges";
 
 export const runtime = "nodejs";
 
@@ -93,7 +94,8 @@ export async function POST(
     assertInspectionAccess(inspection, auth.user);
     assertInspectionUnlocked(inspection);
 
-    await getVesselOrThrow(pb, inspection.vessel);
+    const vessel = await getVesselOrThrow(pb, inspection.vessel);
+    assertCanInspectVessel(auth.user, vessel);
     const template = await getTemplateForInspection(pb, inspection);
     const payload = rawPayloadFromInspection(inspection);
     const photos = await inspectionPhotos(pb, id);

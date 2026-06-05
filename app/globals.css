@@ -189,6 +189,46 @@ select {
   width: 100%;
 }
 
+.assignment-field {
+  border: 0;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+}
+
+.assignment-field legend {
+  color: #30363d;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+.checkbox-list {
+  border: 1px solid #bac3cd;
+  border-radius: 6px;
+  display: grid;
+  gap: 8px;
+  max-height: 180px;
+  overflow: auto;
+  padding: 10px 12px;
+}
+
+.checkbox-field {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.checkbox-field input {
+  width: auto;
+}
+
+.checkbox-field span {
+  font-size: 14px;
+  font-weight: 400;
+}
+
 .button {
   background: var(--accent);
   border: 0;

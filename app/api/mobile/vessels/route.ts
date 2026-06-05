@@ -6,18 +6,15 @@ import {
   mobileSuccess,
 } from "@/lib/mobile-response";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
-import type { VesselRecord } from "@/lib/types";
+import { getInspectableActiveVessels } from "@/lib/vessel-privileges";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
-    await requireMobileUser(request);
+    const auth = await requireMobileUser(request);
     const pb = await getSuperuserPocketBase();
-    const vessels = await pb.collection("vessels").getFullList<VesselRecord>({
-      filter: pb.filter("status = {:status}", { status: "active" }),
-      sort: "name",
-    });
+    const vessels = await getInspectableActiveVessels(pb, auth.user);
 
     return mobileSuccess({
       vessels: vessels.map(toMobileVessel),

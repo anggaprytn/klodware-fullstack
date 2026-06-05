@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 import { AdminShell } from "../AdminShell";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { requireAdminSession } from "@/lib/auth";
-import type { UserRecord, UserRole, UserStatus } from "@/lib/types";
+import type { UserRecord, UserRole, UserStatus, VesselRecord } from "@/lib/types";
 
 function textValue(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -15,6 +15,17 @@ function roleValue(formData: FormData): UserRole {
 
 function statusValue(formData: FormData): UserStatus {
   return textValue(formData, "status") === "inactive" ? "inactive" : "active";
+}
+
+function vesselIdsValue(formData: FormData) {
+  return formData
+    .getAll("inspectable_vessels")
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+}
+
+function inspectableVesselsValue(formData: FormData) {
+  return roleValue(formData) === "inspector" ? vesselIdsValue(formData) : [];
 }
 
 async function createUserAction(formData: FormData) {
@@ -38,6 +49,7 @@ async function createUserAction(formData: FormData) {
     employee_no: textValue(formData, "employee_no"),
     role: roleValue(formData),
     status: statusValue(formData),
+    inspectable_vessels: inspectableVesselsValue(formData),
   });
 
   revalidatePath("/admin/users");
@@ -62,6 +74,7 @@ async function updateUserAction(formData: FormData) {
     employee_no: textValue(formData, "employee_no"),
     role: roleValue(formData),
     status,
+    inspectable_vessels: inspectableVesselsValue(formData),
   });
 
   revalidatePath("/admin/users");
@@ -104,9 +117,15 @@ async function deactivateUserAction(formData: FormData) {
 export default async function AdminUsersPage() {
   const session = await requireAdminSession();
   const pb = await getSuperuserPocketBase();
-  const users = await pb.collection("users").getFullList<UserRecord>({
-    sort: "username",
-  });
+  const [users, vessels] = await Promise.all([
+    pb.collection("users").getFullList<UserRecord>({
+      sort: "username",
+    }),
+    pb.collection("vessels").getFullList<VesselRecord>({
+      filter: pb.filter("status = {:status}", { status: "active" }),
+      sort: "name",
+    }),
+  ]);
 
   return (
     <AdminShell
@@ -147,6 +166,7 @@ export default async function AdminUsersPage() {
                 <option value="inactive">Inactive</option>
               </select>
             </label>
+            <VesselAssignmentFields vessels={vessels} />
             <label className="field">
               <span>Password</span>
               <input name="password" type="password" required />
@@ -199,6 +219,7 @@ export default async function AdminUsersPage() {
                       <option value="inactive">Inactive</option>
                     </select>
                   </label>
+                  <VesselAssignmentFields user={user} vessels={vessels} />
                   <div className="row-actions">
                     <span className={`status-pill ${user.status}`}>
                       {user.role} / {user.status}
@@ -235,5 +256,44 @@ export default async function AdminUsersPage() {
         </section>
       </div>
     </AdminShell>
+  );
+}
+
+function assignedVesselIds(user?: UserRecord) {
+  const vessels = user?.inspectable_vessels;
+  if (!vessels) return new Set<string>();
+  return new Set(Array.isArray(vessels) ? vessels : [vessels]);
+}
+
+function VesselAssignmentFields({
+  user,
+  vessels,
+}: {
+  user?: UserRecord;
+  vessels: VesselRecord[];
+}) {
+  const assigned = assignedVesselIds(user);
+
+  return (
+    <fieldset className="field assignment-field">
+      <legend>Inspectable vessels</legend>
+      <div className="checkbox-list">
+        {vessels.length > 0 ? (
+          vessels.map((vessel) => (
+            <label className="checkbox-field" key={vessel.id}>
+              <input
+                defaultChecked={assigned.has(vessel.id)}
+                name="inspectable_vessels"
+                type="checkbox"
+                value={vessel.id}
+              />
+              <span>{vessel.name}</span>
+            </label>
+          ))
+        ) : (
+          <p className="muted">No active vessels available.</p>
+        )}
+      </div>
+    </fieldset>
   );
 }

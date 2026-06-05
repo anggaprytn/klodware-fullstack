@@ -9,6 +9,7 @@ export type UserRecord = RecordModel & {
   employee_no?: string;
   role: UserRole;
   status: UserStatus;
+  inspectable_vessels?: string[] | string;
   metadata_json?: unknown;
 };
 

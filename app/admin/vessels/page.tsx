@@ -2,8 +2,9 @@ import { revalidatePath } from "next/cache";
 import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "@/lib/auth";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
-import type { VesselRecord } from "@/lib/types";
+import type { InspectionRecord, PdfReportRecord, VesselRecord } from "@/lib/types";
 import { validateVesselImageFile, vesselImagePath } from "@/lib/vessel-image";
+import { AdminVesselsClient, type VesselOperations } from "./VesselsClient";
 
 function textValue(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -21,14 +22,23 @@ function vesselCode(name: string, imo: string) {
 function vesselPayload(formData: FormData, includeCode: boolean) {
   const name = textValue(formData, "name");
   const imo = textValue(formData, "imo");
-  const yearBuilt = Number(textValue(formData, "year_built"));
+  const mmsi = textValue(formData, "mmsi");
+  const rawYearBuilt = textValue(formData, "year_built");
+  const yearBuilt = Number(rawYearBuilt);
   const file = formData.get("image");
   const payload = new FormData();
+
+  if (!name) throw new Error("Vessel name is required.");
+  if (!imo) throw new Error("IMO is required.");
+  if (!mmsi) throw new Error("MMSI is required.");
+  if (rawYearBuilt && !Number.isFinite(yearBuilt)) {
+    throw new Error("Year built must be numeric.");
+  }
 
   payload.set("name", name);
   payload.set("imo", imo);
   payload.set("imo_no", imo);
-  payload.set("mmsi", textValue(formData, "mmsi"));
+  payload.set("mmsi", mmsi);
   payload.set("call_sign", textValue(formData, "call_sign"));
   payload.set("flag", textValue(formData, "flag"));
   payload.set("status", textValue(formData, "status") === "inactive" ? "inactive" : "active");
@@ -55,11 +65,38 @@ function vesselPayload(formData: FormData, includeCode: boolean) {
   return payload;
 }
 
+async function ensureUniqueVesselIdentifiers(
+  imo: string,
+  mmsi: string,
+  currentId?: string,
+) {
+  const pb = await getSuperuserPocketBase();
+  const filters = [
+    pb.filter("(imo = {:imo} || imo_no = {:imo} || mmsi = {:mmsi})", {
+      imo,
+      mmsi,
+    }),
+  ];
+
+  if (currentId) {
+    filters.push(pb.filter("id != {:currentId}", { currentId }));
+  }
+
+  const existing = await pb.collection("vessels").getList<VesselRecord>(1, 1, {
+    filter: filters.join(" && "),
+  });
+
+  if (existing.totalItems > 0) {
+    throw new Error("IMO or MMSI is already used by another vessel.");
+  }
+}
+
 async function createVesselAction(formData: FormData) {
   "use server";
 
   await requireAdminSession();
   const pb = await getSuperuserPocketBase();
+  await ensureUniqueVesselIdentifiers(textValue(formData, "imo"), textValue(formData, "mmsi"));
   await pb.collection("vessels").create(vesselPayload(formData, true));
   revalidatePath("/admin/vessels");
 }
@@ -69,9 +106,11 @@ async function updateVesselAction(formData: FormData) {
 
   await requireAdminSession();
   const pb = await getSuperuserPocketBase();
+  const id = textValue(formData, "id");
+  await ensureUniqueVesselIdentifiers(textValue(formData, "imo"), textValue(formData, "mmsi"), id);
   await pb
     .collection("vessels")
-    .update(textValue(formData, "id"), vesselPayload(formData, false));
+    .update(id, vesselPayload(formData, false));
   revalidatePath("/admin/vessels");
 }
 
@@ -86,137 +125,99 @@ async function deactivateVesselAction(formData: FormData) {
   revalidatePath("/admin/vessels");
 }
 
+async function activateVesselAction(formData: FormData) {
+  "use server";
+
+  await requireAdminSession();
+  const pb = await getSuperuserPocketBase();
+  await pb.collection("vessels").update(textValue(formData, "id"), {
+    status: "active",
+  });
+  revalidatePath("/admin/vessels");
+}
+
+function timeValue(value: string | undefined) {
+  return value ? Date.parse(value) : 0;
+}
+
+function buildVesselOperations(
+  vessels: VesselRecord[],
+  inspections: InspectionRecord[],
+  reports: PdfReportRecord[],
+): Record<string, VesselOperations> {
+  const reportsByInspection = new Map<string, PdfReportRecord[]>();
+
+  for (const report of reports) {
+    const current = reportsByInspection.get(report.inspection) ?? [];
+    current.push(report);
+    reportsByInspection.set(report.inspection, current);
+  }
+
+  return Object.fromEntries(
+    vessels.map((vessel) => {
+      const vesselInspections = inspections
+        .filter((inspection) => inspection.vessel === vessel.id)
+        .sort(
+          (left, right) =>
+            timeValue(right.submitted_at ?? right.synced_at ?? right.updated) -
+            timeValue(left.submitted_at ?? left.synced_at ?? left.updated),
+        );
+      const latestInspection = vesselInspections[0];
+      const latestReport = latestInspection
+        ? (reportsByInspection.get(latestInspection.id) ?? []).sort(
+            (left, right) =>
+              timeValue(right.generated_at ?? right.updated) -
+              timeValue(left.generated_at ?? left.updated),
+          )[0]
+        : undefined;
+
+      return [
+        vessel.id,
+        {
+          inspectionsCount: vesselInspections.length,
+          lastInspectionDate:
+            latestInspection?.submitted_at ?? latestInspection?.synced_at ?? "",
+          lastReportStatus:
+            latestReport?.status ?? latestInspection?.pdf_status ?? "",
+        },
+      ];
+    }),
+  );
+}
+
 export default async function AdminVesselsPage() {
   await requireAdminSession();
   const pb = await getSuperuserPocketBase();
-  const vessels = await pb.collection("vessels").getFullList<VesselRecord>({
-    sort: "name",
-  });
+  const [vessels, inspections, reports] = await Promise.all([
+    pb.collection("vessels").getFullList<VesselRecord>({
+      sort: "name",
+    }),
+    pb.collection("inspections").getFullList<InspectionRecord>({
+      sort: "-submitted_at,-synced_at,-updated",
+    }),
+    pb.collection("pdf_reports").getFullList<PdfReportRecord>({
+      sort: "-generated_at,-updated",
+    }),
+  ]);
+  const imagePaths = Object.fromEntries(
+    vessels.map((vessel) => [vessel.id, vesselImagePath(vessel) ?? ""]),
+  );
+  const operations = buildVesselOperations(vessels, inspections, reports);
 
   return (
     <AdminShell
       title="Vessels"
       description="Manage vessel records used by mobile catalog and inspections."
     >
-      <div className="admin-grid">
-        <section className="panel">
-          <h2>Create Vessel</h2>
-          <form
-            action={createVesselAction}
-            className="form form-grid"
-            encType="multipart/form-data"
-          >
-            <VesselFields />
-            <button className="button" type="submit">
-              Create vessel
-            </button>
-          </form>
-        </section>
-
-        <section className="panel">
-          <h2>Vessel Catalog</h2>
-          <div className="crud-list">
-            {vessels.map((vessel) => (
-              <article className="crud-item" key={vessel.id}>
-                <VesselImagePreview vessel={vessel} />
-                <form
-                  action={updateVesselAction}
-                  className="form form-grid"
-                  encType="multipart/form-data"
-                >
-                  <input name="id" type="hidden" value={vessel.id} />
-                  <VesselFields vessel={vessel} />
-                  <div className="row-actions">
-                    <span className={`status-pill ${vessel.status}`}>
-                      {vessel.status}
-                    </span>
-                    <button className="button" type="submit">
-                      Save
-                    </button>
-                  </div>
-                </form>
-                {vessel.status === "active" ? (
-                  <form action={deactivateVesselAction}>
-                    <input name="id" type="hidden" value={vessel.id} />
-                    <button className="button danger" type="submit">
-                      Deactivate
-                    </button>
-                  </form>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
+      <AdminVesselsClient
+        activateAction={activateVesselAction}
+        createAction={createVesselAction}
+        deactivateAction={deactivateVesselAction}
+        imagePaths={imagePaths}
+        operations={operations}
+        updateAction={updateVesselAction}
+        vessels={vessels}
+      />
     </AdminShell>
-  );
-}
-
-function VesselFields({ vessel }: { vessel?: VesselRecord }) {
-  return (
-    <>
-      <label className="field">
-        <span>Name</span>
-        <input name="name" defaultValue={vessel?.name ?? ""} required />
-      </label>
-      <label className="field">
-        <span>IMO</span>
-        <input name="imo" defaultValue={vessel?.imo ?? vessel?.imo_no ?? ""} />
-      </label>
-      <label className="field">
-        <span>MMSI</span>
-        <input name="mmsi" defaultValue={vessel?.mmsi ?? ""} />
-      </label>
-      <label className="field">
-        <span>Call sign</span>
-        <input name="call_sign" defaultValue={vessel?.call_sign ?? ""} />
-      </label>
-      <label className="field">
-        <span>Flag</span>
-        <input name="flag" defaultValue={vessel?.flag ?? ""} />
-      </label>
-      <label className="field">
-        <span>Year built</span>
-        <input
-          name="year_built"
-          defaultValue={vessel?.year_built ?? ""}
-          min="1800"
-          type="number"
-        />
-      </label>
-      <label className="field">
-        <span>Status</span>
-        <select name="status" defaultValue={vessel?.status ?? "active"}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </label>
-      <label className="field">
-        <span>Image</span>
-        <input accept="image/jpeg,image/png,image/webp" name="image" type="file" />
-      </label>
-    </>
-  );
-}
-
-function VesselImagePreview({ vessel }: { vessel: VesselRecord }) {
-  const imagePath = vesselImagePath(vessel);
-
-  return (
-    <div className="vessel-image-preview">
-      {imagePath ? (
-        // The image is served by the Next.js proxy route, so no remote image config is needed.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img alt={`${vessel.name} vessel`} src={imagePath} />
-      ) : (
-        <div className="vessel-image-placeholder" aria-label="No vessel image">
-          No image
-        </div>
-      )}
-      <div>
-        <strong>{vessel.name}</strong>
-        <span>{vessel.image ? "Image uploaded" : "No image uploaded"}</span>
-      </div>
-    </div>
   );
 }

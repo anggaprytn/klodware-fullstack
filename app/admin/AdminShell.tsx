@@ -1,14 +1,5 @@
-import Link from "next/link";
 import { requireAdminSession, toMobileUserProfile } from "@/lib/auth";
-
-const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard" },
-  { href: "/admin/vessels", label: "Vessels" },
-  { href: "/admin/templates", label: "Templates" },
-  { href: "/admin/inspections", label: "Inspections" },
-  { href: "/admin/reports", label: "Reports" },
-  { href: "/admin/users", label: "Users" },
-];
+import { AdminNav } from "./components/AdminNav";
 
 export async function AdminShell({
   title,
@@ -26,16 +17,7 @@ export async function AdminShell({
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <p className="admin-brand">Klodware</p>
-        <nav className="admin-nav" aria-label="Admin navigation">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-          <form action="/api/admin/auth/logout" method="post">
-            <button type="submit">Logout</button>
-          </form>
-        </nav>
+        <AdminNav />
       </aside>
       <main className="admin-main">
         <div className="admin-header">

@@ -25,7 +25,7 @@ export default async function AdminInspectionsPage({
 
   const inspections = await pb.collection("inspections").getFullList<InspectionRecord>({
     expand: "vessel,user",
-    sort: "-submitted_at,-synced_at,-updated",
+    sort: "-submitted_at,-synced_at",
   });
   const rows = inspections.map((inspection) => {
     const summary = inspectionSummaryValue(inspection);

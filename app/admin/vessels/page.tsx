@@ -193,10 +193,10 @@ export default async function AdminVesselsPage() {
       sort: "name",
     }),
     pb.collection("inspections").getFullList<InspectionRecord>({
-      sort: "-submitted_at,-synced_at,-updated",
+      sort: "-submitted_at,-synced_at",
     }),
     pb.collection("pdf_reports").getFullList<PdfReportRecord>({
-      sort: "-generated_at,-updated",
+      sort: "-generated_at",
     }),
   ]);
   const imagePaths = Object.fromEntries(

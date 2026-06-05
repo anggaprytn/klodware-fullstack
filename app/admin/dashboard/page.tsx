@@ -97,17 +97,17 @@ export default async function AdminDashboardPage() {
   const pb = await getSuperuserPocketBase();
   const [vessels, templates, inspections, reports, users, syncEvents] =
     await Promise.all([
-      pb.collection("vessels").getFullList<VesselRecord>({ sort: "-updated" }),
+      pb.collection("vessels").getFullList<VesselRecord>({ sort: "name" }),
       pb
         .collection("checklist_templates")
-        .getFullList<ChecklistTemplateRecord>({ sort: "-active,-updated" }),
+        .getFullList<ChecklistTemplateRecord>({ sort: "-active,-version,name" }),
       pb.collection("inspections").getFullList<InspectionRecord>({
-        sort: "-synced_at,-updated",
+        sort: "-synced_at",
       }),
       pb.collection("pdf_reports").getFullList<PdfReportRecord>({
-        sort: "-generated_at,-updated",
+        sort: "-generated_at",
       }),
-      pb.collection("users").getFullList<UserRecord>({ sort: "-updated" }),
+      pb.collection("users").getFullList<UserRecord>({ sort: "username" }),
       pb.collection("sync_events").getList<SyncEventRecord>(1, 20, {
         sort: "-occurred_at",
       }),

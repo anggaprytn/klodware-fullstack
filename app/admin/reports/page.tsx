@@ -63,11 +63,11 @@ export default async function AdminReportsPage() {
   const [reports, inspections] = await Promise.all([
     pb.collection("pdf_reports").getFullList<PdfReportRecord>({
       expand: "inspection,inspection.vessel,inspection.user",
-      sort: "-generated_at,-updated",
+      sort: "-generated_at",
     }),
     pb.collection("inspections").getFullList<InspectionRecord>({
       expand: "vessel,user",
-      sort: "-submitted_at,-synced_at,-updated",
+      sort: "-submitted_at,-synced_at",
     }),
   ]);
   const reportInspectionIds = new Set(reports.map((report) => report.inspection));

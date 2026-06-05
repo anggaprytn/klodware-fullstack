@@ -30,8 +30,9 @@ export type VesselRecord = RecordModel & {
   call_sign?: string;
   flag?: string;
   year_built?: number;
-  image?: string;
+  image?: string | string[];
   status: "active" | "inactive";
+  updated?: string;
 };
 
 export type ChecklistTemplateRecord = RecordModel & {

@@ -1,4 +1,5 @@
 import type { ChecklistTemplateRecord, VesselRecord } from "./types";
+import { vesselImageFilename, vesselImageUrl } from "./vessel-image";
 
 function templateSchema(template: ChecklistTemplateRecord) {
   return (
@@ -14,6 +15,8 @@ function templateSchema(template: ChecklistTemplateRecord) {
 }
 
 export function toMobileVessel(vessel: VesselRecord) {
+  const imageUrl = vesselImageUrl(vessel);
+
   return {
     id: vessel.id,
     name: vessel.name,
@@ -23,7 +26,8 @@ export function toMobileVessel(vessel: VesselRecord) {
     flag: vessel.flag ?? "",
     year_built: vessel.year_built ?? null,
     status: vessel.status,
-    image: vessel.image ?? "",
+    image: vesselImageFilename(vessel) ?? "",
+    image_url: imageUrl,
   };
 }
 

@@ -225,6 +225,45 @@ select {
   padding: 14px;
 }
 
+.vessel-image-preview {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.vessel-image-preview img,
+.vessel-image-placeholder {
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  height: 66px;
+  object-fit: cover;
+  width: 88px;
+}
+
+.vessel-image-placeholder {
+  align-items: center;
+  background: #f2f4f7;
+  color: #667085;
+  display: flex;
+  font-size: 12px;
+  font-weight: 700;
+  justify-content: center;
+  text-align: center;
+}
+
+.vessel-image-preview strong,
+.vessel-image-preview span {
+  display: block;
+}
+
+.vessel-image-preview span {
+  color: #667085;
+  font-size: 13px;
+  margin-top: 3px;
+}
+
 .inline-form {
   align-items: center;
   display: grid;

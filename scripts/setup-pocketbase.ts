@@ -53,14 +53,21 @@ const bool = (name: string, required = false): FieldSpec => ({
   required,
 });
 
-const file = (name: string, required = false): FieldSpec => ({
+const file = (
+  name: string,
+  required = false,
+  mimeTypes = ["image/jpeg", "image/png", "application/pdf"],
+): FieldSpec => ({
   name,
   type: "file",
   required,
   maxSelect: 1,
   maxSize: 20 * 1024 * 1024,
-  mimeTypes: ["image/jpeg", "image/png", "application/pdf"],
+  mimeTypes,
 });
+
+const imageFile = (name: string, required = false): FieldSpec =>
+  file(name, required, ["image/jpeg", "image/png", "image/webp"]);
 
 const relation = (
   name: string,
@@ -86,6 +93,25 @@ async function getCollection(name: string) {
 
 function fieldSummary(field: FieldSpec) {
   return `${field.name}:${field.type}`;
+}
+
+function sameStringArray(a: unknown, b: unknown) {
+  if (!Array.isArray(a) || !Array.isArray(b)) return a === b;
+  return [...a].sort().join("\n") === [...b].sort().join("\n");
+}
+
+function fieldNeedsOptionUpdate(existing: FieldSpec, desired: FieldSpec) {
+  if (existing.type !== desired.type) return false;
+
+  if (desired.type === "file") {
+    return (
+      existing.maxSelect !== desired.maxSelect ||
+      existing.maxSize !== desired.maxSize ||
+      !sameStringArray(existing.mimeTypes, desired.mimeTypes)
+    );
+  }
+
+  return false;
 }
 
 async function createCollection(spec: CollectionSpec) {
@@ -171,6 +197,10 @@ async function ensureCollection(spec: CollectionSpec) {
 
   const existingFields = new Map(existing.fields.map((field) => [field.name, field]));
   const missing = resolvedSpec.fields.filter((field) => !existingFields.has(field.name));
+  const optionUpdates = resolvedSpec.fields.filter((field) => {
+    const existingField = existingFields.get(field.name);
+    return existingField && fieldNeedsOptionUpdate(existingField as FieldSpec, field);
+  });
   const mismatches = resolvedSpec.fields.filter((field) => {
     const existingField = existingFields.get(field.name);
     return existingField && existingField.type !== field.type;
@@ -184,16 +214,32 @@ async function ensureCollection(spec: CollectionSpec) {
     );
   }
 
-  if (missing.length === 0) {
+  if (missing.length === 0 && optionUpdates.length === 0) {
     console.log(`verified collection ${resolvedSpec.name}`);
   } else {
+    const desiredFields = new Map(resolvedSpec.fields.map((field) => [field.name, field]));
     await pb.collections.update(existing.id, {
-      fields: [...existing.fields, ...missing],
+      fields: [
+        ...existing.fields.map((field) => {
+          const desired = desiredFields.get(field.name);
+          if (!desired || !fieldNeedsOptionUpdate(field as FieldSpec, desired)) {
+            return field;
+          }
+
+          return {
+            ...field,
+            ...desired,
+          };
+        }),
+        ...missing,
+      ],
     });
     console.log(
-      `updated collection ${resolvedSpec.name}; added fields ${missing
-        .map(fieldSummary)
-        .join(", ")}`,
+      `updated collection ${resolvedSpec.name}; ${
+        missing.length > 0
+          ? `added fields ${missing.map(fieldSummary).join(", ")}`
+          : "updated field options"
+      }`,
     );
   }
 
@@ -270,7 +316,7 @@ async function buildSpecs(): Promise<CollectionSpec[]> {
         number("year_built"),
         text("type"),
         select("status", ["active", "inactive"], true),
-        file("image"),
+        imageFile("image"),
         json("metadata_json"),
       ],
       indexes: [

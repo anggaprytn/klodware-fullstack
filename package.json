@@ -16,6 +16,7 @@
     "setup:pocketbase": "tsx scripts/setup-pocketbase.ts",
     "seed:template": "tsx scripts/seed-template.ts",
     "seed:vessels": "tsx scripts/seed-vessels.ts",
+    "smoke:vessel-image": "tsx scripts/smoke-vessel-image.ts",
     "worker:pdf": "tsx scripts/pdf-worker.ts"
   },
   "repository": {

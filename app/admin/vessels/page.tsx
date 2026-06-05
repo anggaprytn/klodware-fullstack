@@ -3,6 +3,7 @@ import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "@/lib/auth";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import type { VesselRecord } from "@/lib/types";
+import { validateVesselImageFile, vesselImagePath } from "@/lib/vessel-image";
 
 function textValue(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -32,6 +33,8 @@ function vesselPayload(formData: FormData, includeCode: boolean) {
   payload.set("flag", textValue(formData, "flag"));
   payload.set("status", textValue(formData, "status") === "inactive" ? "inactive" : "active");
 
+  const metadata = textValue(formData, "metadata_json");
+
   if (includeCode) {
     payload.set("code", vesselCode(name, imo));
   }
@@ -41,7 +44,12 @@ function vesselPayload(formData: FormData, includeCode: boolean) {
   }
 
   if (file instanceof File && file.size > 0) {
+    validateVesselImageFile(file);
     payload.set("image", file);
+  }
+
+  if (metadata) {
+    payload.set("metadata_json", JSON.stringify(JSON.parse(metadata)));
   }
 
   return payload;
@@ -110,6 +118,7 @@ export default async function AdminVesselsPage() {
           <div className="crud-list">
             {vessels.map((vessel) => (
               <article className="crud-item" key={vessel.id}>
+                <VesselImagePreview vessel={vessel} />
                 <form
                   action={updateVesselAction}
                   className="form form-grid"
@@ -184,8 +193,30 @@ function VesselFields({ vessel }: { vessel?: VesselRecord }) {
       </label>
       <label className="field">
         <span>Image</span>
-        <input accept="image/jpeg,image/png" name="image" type="file" />
+        <input accept="image/jpeg,image/png,image/webp" name="image" type="file" />
       </label>
     </>
+  );
+}
+
+function VesselImagePreview({ vessel }: { vessel: VesselRecord }) {
+  const imagePath = vesselImagePath(vessel);
+
+  return (
+    <div className="vessel-image-preview">
+      {imagePath ? (
+        // The image is served by the Next.js proxy route, so no remote image config is needed.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img alt={`${vessel.name} vessel`} src={imagePath} />
+      ) : (
+        <div className="vessel-image-placeholder" aria-label="No vessel image">
+          No image
+        </div>
+      )}
+      <div>
+        <strong>{vessel.name}</strong>
+        <span>{vessel.image ? "Image uploaded" : "No image uploaded"}</span>
+      </div>
+    </div>
   );
 }

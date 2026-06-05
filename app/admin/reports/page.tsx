@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "@/lib/auth";
-import { getInspectionOrThrow } from "@/lib/inspections";
+import { getInspectionOrThrow, isSubmittedInspection } from "@/lib/inspections";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { canGeneratePdfDownloadToken } from "@/lib/pdf/pdf-token";
 import { buildPdfDownloadUrl } from "@/lib/pdf/report-access";
@@ -13,6 +12,7 @@ import type {
   UserRecord,
   VesselRecord,
 } from "@/lib/types";
+import { AdminReportsClient, type AdminReportRow } from "./ReportsClient";
 
 function inspectionFromExpand(report: PdfReportRecord) {
   const expanded = report.expand as Record<string, unknown> | undefined;
@@ -60,90 +60,75 @@ async function regeneratePdfAction(formData: FormData) {
 export default async function AdminReportsPage() {
   await requireAdminSession();
   const pb = await getSuperuserPocketBase();
-  const reports = await pb.collection("pdf_reports").getFullList<PdfReportRecord>({
-    expand: "inspection,inspection.vessel,inspection.user",
-    sort: "-generated_at",
+  const [reports, inspections] = await Promise.all([
+    pb.collection("pdf_reports").getFullList<PdfReportRecord>({
+      expand: "inspection,inspection.vessel,inspection.user",
+      sort: "-generated_at,-updated",
+    }),
+    pb.collection("inspections").getFullList<InspectionRecord>({
+      expand: "vessel,user",
+      sort: "-submitted_at,-synced_at,-updated",
+    }),
+  ]);
+  const reportInspectionIds = new Set(reports.map((report) => report.inspection));
+  const reportRows: AdminReportRow[] = reports.map((report) => {
+    const inspection = inspectionFromExpand(report);
+    const vessel = vesselFromExpand(inspection);
+    const user = userFromExpand(inspection);
+
+    return {
+      downloadHref: signedDownloadHref(report) ?? "",
+      errorMessage: report.error_message ?? "",
+      fileSizeBytes: report.file_size_bytes ?? 0,
+      generatedAt: report.generated_at ?? "",
+      inspectionId: inspection?.id ?? report.inspection,
+      inspectionLocalId: inspection?.local_id ?? "",
+      inspectorName: inspection?.inspector_name || user?.full_name || "",
+      metadata: report.metadata_json ?? null,
+      reportId: report.id,
+      rowId: `report:${report.id}`,
+      status: report.status,
+      submittedAt: inspection?.submitted_at ?? "",
+      vesselName: vessel?.name ?? "",
+    };
   });
+  const pendingRows: AdminReportRow[] = inspections
+    .filter(
+      (inspection) =>
+        isSubmittedInspection(inspection) && !reportInspectionIds.has(inspection.id),
+    )
+    .map((inspection) => {
+      const expanded = inspection.expand as Record<string, unknown> | undefined;
+      const vessel = expanded?.vessel as VesselRecord | undefined;
+      const user = expanded?.user as UserRecord | undefined;
+
+      return {
+        downloadHref: "",
+        errorMessage: "",
+        fileSizeBytes: 0,
+        generatedAt: "",
+        inspectionId: inspection.id,
+        inspectionLocalId: inspection.local_id,
+        inspectorName: inspection.inspector_name || user?.full_name || "",
+        metadata: null,
+        reportId: "",
+        rowId: `pending:${inspection.id}`,
+        status: inspection.pdf_status === "not_requested" ? "not_requested" : inspection.pdf_status,
+        submittedAt: inspection.submitted_at ?? "",
+        vesselName: vessel?.name ?? "",
+      };
+    });
 
   return (
     <AdminShell
       title="Reports"
-      description="Review generated PDF reports, failures, and regeneration requests."
+      description="Manage generated inspection PDF reports."
     >
-      <section className="panel">
-        <h2>PDF Report Queue</h2>
-        <div className="table-wrap">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Report</th>
-                <th>Status</th>
-                <th>Inspection</th>
-                <th>Vessel</th>
-                <th>Inspector</th>
-                <th>Size</th>
-                <th>Generated</th>
-                <th>Error</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.map((report) => {
-                const inspection = inspectionFromExpand(report);
-                const vessel = vesselFromExpand(inspection);
-                const user = userFromExpand(inspection);
-                const downloadHref = signedDownloadHref(report);
-                return (
-                  <tr key={report.id}>
-                    <td className="checksum">{report.id}</td>
-                    <td>{report.status}</td>
-                    <td>
-                      {inspection ? (
-                        <Link href={`/admin/inspections/${inspection.id}`}>
-                          {inspection.local_id || inspection.id}
-                        </Link>
-                      ) : (
-                        report.inspection
-                      )}
-                    </td>
-                    <td>{vessel?.name ?? inspection?.vessel ?? ""}</td>
-                    <td>{inspection?.inspector_name || user?.full_name || ""}</td>
-                    <td>{report.file_size_bytes ?? 0}</td>
-                    <td>{report.generated_at ?? ""}</td>
-                    <td>{report.error_message ?? ""}</td>
-                    <td>
-                      <div className="row-actions">
-                        {downloadHref ? (
-                          <Link className="button secondary" href={downloadHref}>
-                            Download
-                          </Link>
-                        ) : null}
-                        {inspection ? (
-                          <form action={regeneratePdfAction}>
-                            <input
-                              name="inspection_id"
-                              type="hidden"
-                              value={inspection.id}
-                            />
-                            <button className="button" type="submit">
-                              Regenerate
-                            </button>
-                          </form>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-              {reports.length === 0 ? (
-                <tr>
-                  <td colSpan={9}>No PDF report records yet.</td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <AdminReportsClient
+        regenerateAction={regeneratePdfAction}
+        rows={[...reportRows, ...pendingRows]}
+        totalReportRecords={reports.length}
+      />
     </AdminShell>
   );
 }

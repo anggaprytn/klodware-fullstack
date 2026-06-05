@@ -49,6 +49,7 @@ export function statusTone(value: string | null | undefined): StatusTone {
     case "pending":
     case "not_requested":
     case "draft":
+    case "warning":
       return "warning";
     case "failed":
     case "invalid":

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useFormStatus } from "react-dom";
 import { formatDateTime, shortenId } from "@/lib/admin-format";
 import type { ChecklistTemplateRecord } from "@/lib/types";
 import {
@@ -13,8 +12,9 @@ import {
   SummaryCard,
 } from "../components/AdminUi";
 import { CopyButton } from "../components/CopyButton";
+import { ActionForm, type AdminAction } from "../components/ActionForm";
 
-type TemplateAction = () => Promise<void>;
+type TemplateAction = AdminAction;
 type DetailTab = "overview" | "sections" | "rules" | "raw";
 
 type SeedSource = {
@@ -45,9 +45,7 @@ type RawTemplateItem = {
   label?: unknown;
 };
 
-function ImportButton() {
-  const { pending } = useFormStatus();
-
+function ImportButton({ pending }: { pending: boolean }) {
   return (
     <button className="button" disabled={pending} type="submit">
       {pending ? "Importing..." : "Import Seed Template"}
@@ -352,20 +350,14 @@ export function AdminTemplatesClient({
             <h2>Seed Source</h2>
             <p className="muted">{seedSource.name}</p>
           </div>
-          <form
+          <ActionForm
             action={importAction}
-            onSubmit={(event) => {
-              if (
-                !window.confirm(
-                  "Importing this template may replace or update the active checklist template.",
-                )
-              ) {
-                event.preventDefault();
-              }
-            }}
+            confirmMessage="Importing this template may replace or update the active checklist template."
+            errorMessage="Template import failed."
+            successMessage="Seed template imported."
           >
-            <ImportButton />
-          </form>
+            {(pending) => <ImportButton pending={pending} />}
+          </ActionForm>
         </div>
         <dl className="detail-list">
           <div>

@@ -127,6 +127,12 @@ export default async function AdminDashboardPage() {
   const reportsGenerating = reports.filter(
     (report) => report.status === "queued" || report.status === "generating",
   );
+  const reportInspectionIds = new Set(reports.map((report) => report.inspection));
+  const submittedInspectionsWithoutReport = submittedInspections.filter(
+    (inspection) => !reportInspectionIds.has(inspection.id),
+  );
+  const reportsWaitingGeneration =
+    reportsGenerating.length + submittedInspectionsWithoutReport.length;
   const activeTemplate = templates.find(
     (template) => template.active === true || template.is_active === true,
   );
@@ -186,11 +192,27 @@ export default async function AdminDashboardPage() {
     },
     {
       label: "Reports waiting generation",
-      count: reportsGenerating.length,
+      count: reportsWaitingGeneration,
       href: "/admin/reports",
       tone: "warning" as const,
     },
   ];
+  const healthIssueCount = attentionItems.reduce(
+    (total, item) => total + item.count,
+    activeTemplate ? 0 : 1,
+  );
+  const healthStatus =
+    healthIssueCount === 0
+      ? "Healthy"
+      : pdfFailedReports.length > 0 || syncFailures.length > 0 || invalidTemplates.length > 0
+        ? "Needs Review"
+        : "Watch";
+  const healthTone =
+    healthStatus === "Healthy"
+      ? "success"
+      : healthStatus === "Needs Review"
+        ? "danger"
+        : "warning";
 
   return (
     <AdminShell
@@ -224,6 +246,12 @@ export default async function AdminDashboardPage() {
 
         <PageSection title="Operational Health">
           <section className="metric-grid compact">
+            <SummaryCard
+              label="System Health"
+              meta={`${healthIssueCount} issue${healthIssueCount === 1 ? "" : "s"} from available records`}
+              tone={healthTone}
+              value={healthStatus}
+            />
             <SummaryCard label="Active Vessels" tone="success" value={activeVessels.length} />
             <SummaryCard label="Inactive Vessels" value={inactiveVessels.length} />
             <SummaryCard label="Submitted Inspections" tone="success" value={submittedInspections.length} />
@@ -235,7 +263,7 @@ export default async function AdminDashboardPage() {
             />
             <SummaryCard label="PDF Ready" tone="success" value={pdfReadyReports.length} />
             <SummaryCard label="PDF Failed" tone={pdfFailedReports.length > 0 ? "danger" : "success"} value={pdfFailedReports.length} />
-            <SummaryCard label="Reports Generating" tone={reportsGenerating.length > 0 ? "warning" : "success"} value={reportsGenerating.length} />
+            <SummaryCard label="Reports Waiting" tone={reportsWaitingGeneration > 0 ? "warning" : "success"} value={reportsWaitingGeneration} />
             <SummaryCard
               label="Active Template Status"
               meta={activeTemplate ? `${activeTemplate.name} v${activeTemplate.version}` : "No active template"}

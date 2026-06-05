@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { useFormStatus } from "react-dom";
 import {
   formatDateTime,
   formatFileSize,
@@ -20,8 +19,9 @@ import {
   SummaryCard,
 } from "../components/AdminUi";
 import { CopyButton } from "../components/CopyButton";
+import { ActionForm, type AdminAction } from "../components/ActionForm";
 
-type RegenerateAction = (formData: FormData) => Promise<void>;
+type RegenerateAction = AdminAction;
 
 export type AdminReportRow = {
   rowId: string;
@@ -39,9 +39,7 @@ export type AdminReportRow = {
   metadata: unknown;
 };
 
-function SubmitPdfButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-
+function SubmitPdfButton({ label, pending }: { label: string; pending: boolean }) {
   return (
     <button className="button" disabled={pending} type="submit">
       {pending ? "Requesting..." : label}
@@ -67,10 +65,18 @@ function ReportActions({
         <Link className="button secondary" href={`/admin/inspections/${row.inspectionId}`}>
           View
         </Link>
-        <form action={regenerateAction}>
-          <input name="inspection_id" type="hidden" value={row.inspectionId} />
-          <SubmitPdfButton label="Regenerate" />
-        </form>
+        <ActionForm
+          action={regenerateAction}
+          errorMessage="Unable to request PDF regeneration."
+          successMessage="PDF regeneration requested."
+        >
+          {(pending) => (
+            <>
+              <input name="inspection_id" type="hidden" value={row.inspectionId} />
+              <SubmitPdfButton label="Regenerate" pending={pending} />
+            </>
+          )}
+        </ActionForm>
       </div>
     );
   }
@@ -81,10 +87,18 @@ function ReportActions({
         <Link className="button secondary" href={`/admin/inspections/${row.inspectionId}`}>
           View Error
         </Link>
-        <form action={regenerateAction}>
-          <input name="inspection_id" type="hidden" value={row.inspectionId} />
-          <SubmitPdfButton label="Retry Generate" />
-        </form>
+        <ActionForm
+          action={regenerateAction}
+          errorMessage="Unable to retry PDF generation."
+          successMessage="PDF generation retry requested."
+        >
+          {(pending) => (
+            <>
+              <input name="inspection_id" type="hidden" value={row.inspectionId} />
+              <SubmitPdfButton label="Retry Generate" pending={pending} />
+            </>
+          )}
+        </ActionForm>
       </div>
     );
   }
@@ -103,10 +117,18 @@ function ReportActions({
   }
 
   return (
-    <form action={regenerateAction}>
-      <input name="inspection_id" type="hidden" value={row.inspectionId} />
-      <SubmitPdfButton label="Generate PDF" />
-    </form>
+    <ActionForm
+      action={regenerateAction}
+      errorMessage="Unable to request PDF generation."
+      successMessage="PDF generation requested."
+    >
+      {(pending) => (
+        <>
+          <input name="inspection_id" type="hidden" value={row.inspectionId} />
+          <SubmitPdfButton label="Generate PDF" pending={pending} />
+        </>
+      )}
+    </ActionForm>
   );
 }
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useFormStatus } from "react-dom";
 import {
   formatDateTime,
   hasPocketBaseFile,
@@ -15,8 +14,9 @@ import {
   StatusBadge,
   SummaryCard,
 } from "../components/AdminUi";
+import { ActionForm, type AdminAction } from "../components/ActionForm";
 
-type VesselAction = (formData: FormData) => Promise<void>;
+type VesselAction = AdminAction;
 type DrawerMode = "create" | "edit" | "view";
 
 export type VesselOperations = {
@@ -25,9 +25,7 @@ export type VesselOperations = {
   lastReportStatus: PdfStatus | "";
 };
 
-function SubmitButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-
+function SubmitButton({ label, pending }: { label: string; pending: boolean }) {
   return (
     <button className="button" disabled={pending} type="submit">
       {pending ? "Saving..." : label}
@@ -289,23 +287,33 @@ function VesselDrawer({
               </dl>
             </>
           ) : (
-            <form
+            <ActionForm
               action={action}
               className="form"
               encType="multipart/form-data"
+              errorMessage="Unable to save vessel."
+              onSuccess={onClose}
+              successMessage={mode === "create" ? "Vessel created." : "Vessel updated."}
             >
-              <VesselFields
-                currentImagePath={imagePath}
-                mode={mode}
-                vessel={vessel}
-              />
-              <div className="row-actions">
-                <button className="button secondary" onClick={onClose} type="button">
-                  Cancel
-                </button>
-                <SubmitButton label={mode === "create" ? "Create Vessel" : "Save Changes"} />
-              </div>
-            </form>
+              {(pending) => (
+                <>
+                  <VesselFields
+                    currentImagePath={imagePath}
+                    mode={mode}
+                    vessel={vessel}
+                  />
+                  <div className="row-actions">
+                    <button className="button secondary" onClick={onClose} type="button">
+                      Cancel
+                    </button>
+                    <SubmitButton
+                      label={mode === "create" ? "Create Vessel" : "Save Changes"}
+                      pending={pending}
+                    />
+                  </div>
+                </>
+              )}
+            </ActionForm>
           )}
         </div>
       </aside>
@@ -475,26 +483,36 @@ export function AdminVesselsClient({
                             Edit
                           </button>
                           {vessel.status === "active" ? (
-                            <form
+                            <ActionForm
                               action={deactivateAction}
-                              onSubmit={(event) => {
-                                if (!window.confirm(`Deactivate ${vessel.name}?`)) {
-                                  event.preventDefault();
-                                }
-                              }}
+                              confirmMessage={`Deactivate ${vessel.name}?`}
+                              errorMessage="Unable to deactivate vessel."
+                              successMessage="Vessel deactivated."
                             >
-                              <input name="id" type="hidden" value={vessel.id} />
-                              <button className="button danger" type="submit">
-                                Deactivate
-                              </button>
-                            </form>
+                              {(pending) => (
+                                <>
+                                  <input name="id" type="hidden" value={vessel.id} />
+                                  <button className="button danger" disabled={pending} type="submit">
+                                    {pending ? "Deactivating..." : "Deactivate"}
+                                  </button>
+                                </>
+                              )}
+                            </ActionForm>
                           ) : (
-                            <form action={activateAction}>
-                              <input name="id" type="hidden" value={vessel.id} />
-                              <button className="button secondary" type="submit">
-                                Activate
-                              </button>
-                            </form>
+                            <ActionForm
+                              action={activateAction}
+                              errorMessage="Unable to activate vessel."
+                              successMessage="Vessel activated."
+                            >
+                              {(pending) => (
+                                <>
+                                  <input name="id" type="hidden" value={vessel.id} />
+                                  <button className="button secondary" disabled={pending} type="submit">
+                                    {pending ? "Activating..." : "Activate"}
+                                  </button>
+                                </>
+                              )}
+                            </ActionForm>
                           )}
                         </div>
                       </td>

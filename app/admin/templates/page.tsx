@@ -1,5 +1,4 @@
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { AdminShell } from "../AdminShell";
 import {
   countTemplateItems,
@@ -15,23 +14,10 @@ async function importTemplateAction() {
   "use server";
 
   await requireAdminSession();
-  let target = "/admin/templates";
-
-  try {
-    const result = await seedChecklistTemplate({
-      requireCompleteExtraction: true,
-    });
-    revalidatePath("/admin/templates");
-    target = `/admin/templates?message=${encodeURIComponent(
-      `${result.action} ${result.record.template_id} v${result.record.version}`,
-    )}`;
-  } catch (error) {
-    target = `/admin/templates?error=${encodeURIComponent(
-      error instanceof Error ? error.message : "Template import failed.",
-    )}`;
-  }
-
-  redirect(target);
+  await seedChecklistTemplate({
+    requireCompleteExtraction: true,
+  });
+  revalidatePath("/admin/templates");
 }
 
 export default async function AdminTemplatesPage({

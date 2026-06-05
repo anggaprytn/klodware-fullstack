@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useFormStatus } from "react-dom";
 import { formatDateTime, formatFileSize } from "@/lib/admin-format";
 import type { AdminFinding } from "@/lib/admin-inspection";
 import type { InspectionStatus, PdfStatus } from "@/lib/types";
@@ -15,9 +14,10 @@ import {
   SummaryCard,
 } from "../../components/AdminUi";
 import { CopyButton } from "../../components/CopyButton";
+import { ActionForm, type AdminAction } from "../../components/ActionForm";
 
 type DetailTab = "overview" | "findings" | "photos" | "checklist" | "debug";
-type RegenerateAction = (formData: FormData) => Promise<void>;
+type RegenerateAction = AdminAction;
 
 type DetailPhoto = {
   id: string;
@@ -97,9 +97,7 @@ export type InspectionDetailView = {
   rawPayload: unknown;
 };
 
-function SubmitPdfButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-
+function SubmitPdfButton({ label, pending }: { label: string; pending: boolean }) {
   return (
     <button className="button" disabled={pending} type="submit">
       {pending ? "Requesting..." : label}
@@ -350,10 +348,18 @@ export function InspectionDetailClient({
                   Download PDF
                 </Link>
               ) : null}
-              <form action={regenerateAction}>
-                <input name="inspection_id" type="hidden" value={view.id} />
-                <SubmitPdfButton label={pdfActionLabel(view)} />
-              </form>
+              <ActionForm
+                action={regenerateAction}
+                errorMessage="Unable to request PDF action."
+                successMessage="PDF action requested."
+              >
+                {(pending) => (
+                  <>
+                    <input name="inspection_id" type="hidden" value={view.id} />
+                    <SubmitPdfButton label={pdfActionLabel(view)} pending={pending} />
+                  </>
+                )}
+              </ActionForm>
             </div>
           </PageSection>
         </div>

@@ -38,15 +38,43 @@ export default function AdminLoginPage() {
 
   return (
     <main className="login-wrap">
-      <section className="login-panel">
-        <h1>Klodware Admin</h1>
-        <p className="muted">Sign in with an active admin user or PocketBase superuser.</p>
-        <form className="form" onSubmit={onSubmit}>
-          <div className="field">
-            <label htmlFor="username">Username</label>
-            <input id="username" name="username" autoComplete="username" required />
+      <video
+        aria-hidden="true"
+        className="login-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source
+          src="https://testing-1355450658.cos.ap-jakarta.myqcloud.com/klodware-landing.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <div className="login-overlay" aria-hidden="true" />
+      <section className="login-panel" aria-labelledby="admin-login-title">
+        <div className="login-context">
+          <span className="login-badge">Secure Admin Access</span>
+          <div>
+            <h1 id="admin-login-title">Klodware Admin</h1>
+            <p className="login-subtitle">Ship Maintenance Control Console</p>
           </div>
-          <div className="field">
+          <p className="login-copy">
+            Manage vessels, inspection templates, submitted reports, and sync
+            diagnostics.
+          </p>
+        </div>
+        <form className="form login-form" onSubmit={onSubmit}>
+          <div className="field login-field">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              name="username"
+              autoComplete="username"
+              required
+            />
+          </div>
+          <div className="field login-field">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -59,10 +87,16 @@ export default function AdminLoginPage() {
           <p className="error" role="alert">
             {error}
           </p>
-          <button className="button" type="submit" disabled={submitting}>
+          <button
+            className="button login-button"
+            type="submit"
+            disabled={submitting}
+            aria-busy={submitting}
+          >
             {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
+        <p className="login-footnote">Mobile inspection execution remains on React Native app.</p>
       </section>
     </main>
   );

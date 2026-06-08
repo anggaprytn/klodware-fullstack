@@ -222,23 +222,155 @@ textarea {
 
 .login-wrap {
   align-items: center;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(24, 168, 141, 0.18), transparent 32%),
+    linear-gradient(135deg, #061017 0%, #091923 45%, #020508 100%);
   display: flex;
-  min-height: 100vh;
   justify-content: center;
-  padding: 24px;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 32px 24px;
+  position: relative;
+}
+
+.login-video {
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+}
+
+.login-overlay {
+  background:
+    linear-gradient(90deg, rgba(2, 8, 12, 0.86), rgba(4, 17, 24, 0.72)),
+    radial-gradient(circle at 72% 26%, rgba(18, 148, 127, 0.2), transparent 34%),
+    rgba(1, 6, 10, 0.56);
+  inset: 0;
+  position: absolute;
+  z-index: 1;
 }
 
 .login-panel {
-  background: #ffffff;
-  border: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, rgba(9, 22, 30, 0.9), rgba(3, 10, 15, 0.86));
+  border: 1px solid rgba(148, 220, 204, 0.24);
   border-radius: 8px;
-  max-width: 420px;
-  padding: 28px;
+  box-shadow:
+    0 28px 90px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: #f5fbfa;
+  max-width: 464px;
+  padding: 34px;
+  position: relative;
   width: 100%;
+  z-index: 2;
 }
 
 .login-panel h1 {
-  margin: 0 0 8px;
+  font-size: 34px;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.login-context {
+  display: grid;
+  gap: 14px;
+}
+
+.login-badge {
+  align-items: center;
+  background: rgba(26, 111, 99, 0.18);
+  border: 1px solid rgba(118, 224, 201, 0.34);
+  border-radius: 999px;
+  color: #b9fff0;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 800;
+  justify-self: start;
+  letter-spacing: 0;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+
+.login-subtitle {
+  color: #b9c8cc;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 8px 0 0;
+}
+
+.login-copy {
+  color: #d7e5e4;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 34rem;
+}
+
+.login-panel .login-form {
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.login-panel .login-field label {
+  color: #dcefed;
+}
+
+.login-panel .login-field input {
+  background: rgba(2, 11, 16, 0.72);
+  border-color: rgba(163, 202, 195, 0.32);
+  color: #ffffff;
+  min-height: 46px;
+}
+
+.login-panel .login-field input:focus {
+  border-color: #4de0c2;
+  box-shadow: 0 0 0 4px rgba(77, 224, 194, 0.18);
+  outline: none;
+}
+
+.login-panel .login-button {
+  background: linear-gradient(135deg, #0f766e, #18a37f);
+  box-shadow: 0 14px 28px rgba(5, 93, 79, 0.28);
+  min-height: 48px;
+}
+
+.login-panel .login-button:hover {
+  background: linear-gradient(135deg, #115e59, #138c70);
+}
+
+.login-panel .login-button:focus-visible {
+  box-shadow:
+    0 0 0 4px rgba(77, 224, 194, 0.22),
+    0 14px 28px rgba(5, 93, 79, 0.28);
+  outline: none;
+}
+
+.login-panel .error {
+  color: #ffb4aa;
+  margin: 0;
+}
+
+.login-footnote {
+  border-top: 1px solid rgba(148, 220, 204, 0.16);
+  color: #9fb3b7;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 22px 0 0;
+  padding-top: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-video {
+    display: none;
+  }
+
+  .login-overlay {
+    background:
+      linear-gradient(90deg, rgba(2, 8, 12, 0.9), rgba(4, 17, 24, 0.82)),
+      radial-gradient(circle at 70% 24%, rgba(18, 148, 127, 0.18), transparent 36%);
+  }
 }
 
 .panel h2 {
@@ -925,6 +1057,19 @@ details summary {
 }
 
 @media (max-width: 760px) {
+  .login-wrap {
+    padding: 24px 16px;
+  }
+
+  .login-panel {
+    padding: 26px 20px;
+    width: min(100%, 420px);
+  }
+
+  .login-panel h1 {
+    font-size: 30px;
+  }
+
   .admin-shell {
     grid-template-columns: 1fr;
   }

@@ -1,4 +1,4 @@
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/auth";
 import { safeJsonPreview } from "@/lib/admin-format";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
@@ -56,11 +56,12 @@ export default async function AdminSyncEventsPage() {
   }));
 
   return (
-    <AdminShell
-      title="Sync Events"
-      description="Review mobile sync diagnostics, validation failures, and device events."
-    >
+    <>
+      <AdminPageHeader
+        title="Sync Events"
+        description="Review mobile sync diagnostics, validation failures, and device events."
+      />
       <AdminSyncEventsClient rows={rows} />
-    </AdminShell>
+    </>
   );
 }

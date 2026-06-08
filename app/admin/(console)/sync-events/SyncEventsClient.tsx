@@ -9,8 +9,8 @@ import {
   ShortCode,
   StatusBadge,
   SummaryCard,
-} from "../components/AdminUi";
-import { CopyButton } from "../components/CopyButton";
+} from "../../components/AdminUi";
+import { CopyButton } from "../../components/CopyButton";
 
 export type AdminSyncEventRow = {
   id: string;

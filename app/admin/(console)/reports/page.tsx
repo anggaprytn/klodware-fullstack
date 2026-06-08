@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/auth";
 import { getInspectionOrThrow, isSubmittedInspection } from "@/lib/inspections";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
@@ -120,15 +120,16 @@ export default async function AdminReportsPage() {
     });
 
   return (
-    <AdminShell
-      title="Reports"
-      description="Manage generated inspection PDF reports."
-    >
+    <>
+      <AdminPageHeader
+        title="Reports"
+        description="Manage generated inspection PDF reports."
+      />
       <AdminReportsClient
         regenerateAction={regeneratePdfAction}
         rows={[...reportRows, ...pendingRows]}
         totalReportRecords={reports.length}
       />
-    </AdminShell>
+    </>
   );
 }

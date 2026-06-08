@@ -7,8 +7,8 @@ import {
   PageSection,
   StatusBadge,
   SummaryCard,
-} from "../components/AdminUi";
-import { ActionForm, type AdminAction } from "../components/ActionForm";
+} from "../../components/AdminUi";
+import { ActionForm, type AdminAction } from "../../components/ActionForm";
 
 type UserAction = AdminAction;
 type DrawerMode = "create" | "edit";

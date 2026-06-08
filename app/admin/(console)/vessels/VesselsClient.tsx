@@ -13,8 +13,8 @@ import {
   PdfStatusBadge,
   StatusBadge,
   SummaryCard,
-} from "../components/AdminUi";
-import { ActionForm, type AdminAction } from "../components/ActionForm";
+} from "../../components/AdminUi";
+import { ActionForm, type AdminAction } from "../../components/ActionForm";
 
 type VesselAction = AdminAction;
 type DrawerMode = "create" | "edit" | "view";

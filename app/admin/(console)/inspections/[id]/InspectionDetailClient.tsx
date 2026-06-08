@@ -12,9 +12,9 @@ import {
   ShortCode,
   StatusBadge,
   SummaryCard,
-} from "../../components/AdminUi";
-import { CopyButton } from "../../components/CopyButton";
-import { ActionForm, type AdminAction } from "../../components/ActionForm";
+} from "../../../components/AdminUi";
+import { CopyButton } from "../../../components/CopyButton";
+import { ActionForm, type AdminAction } from "../../../components/ActionForm";
 
 type DetailTab = "overview" | "findings" | "photos" | "checklist" | "debug";
 type RegenerateAction = AdminAction;

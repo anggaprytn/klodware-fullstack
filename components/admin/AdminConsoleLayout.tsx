@@ -1,16 +1,11 @@
 import { requireAdminSession, toMobileUserProfile } from "@/lib/auth";
-import { AdminPageHeader } from "./AdminPageHeader";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminTopbar } from "./AdminTopbar";
 
-export async function AdminShell({
+export async function AdminConsoleLayout({
   children,
-  description,
-  title,
 }: {
   children: React.ReactNode;
-  description: string;
-  title: string;
 }) {
   const session = await requireAdminSession();
   const user = toMobileUserProfile(session.user);
@@ -22,10 +17,7 @@ export async function AdminShell({
       </div>
       <div className="admin-shell__body">
         <AdminTopbar user={user} />
-        <main className="admin-main">
-          <AdminPageHeader description={description} title={title} />
-          {children}
-        </main>
+        <main className="admin-main">{children}</main>
       </div>
     </div>
   );

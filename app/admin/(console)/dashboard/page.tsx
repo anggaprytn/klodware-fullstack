@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { getAdminStats, requireAdminSession } from "@/lib/auth";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { formatDateTime, hasPocketBaseFile, humanizeStatus } from "@/lib/admin-format";
@@ -18,7 +18,7 @@ import {
   EmptyState,
   PageSection,
   SummaryCard,
-} from "../components/AdminUi";
+} from "../../components/AdminUi";
 import type {
   ChecklistTemplateRecord,
   InspectionRecord,
@@ -242,10 +242,11 @@ export default async function AdminDashboardPage() {
         : "warning";
 
   return (
-    <AdminShell
-      title="Dashboard"
-      description="Operational overview for vessel inspections."
-    >
+    <>
+      <AdminPageHeader
+        title="Dashboard"
+        description="Operational overview for vessel inspections."
+      />
       <div className="admin-grid">
         <section className="metric-grid">
           <AdminStatCard
@@ -504,6 +505,6 @@ export default async function AdminDashboardPage() {
           )}
         </PageSection>
       </div>
-    </AdminShell>
+    </>
   );
 }

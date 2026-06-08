@@ -18,9 +18,9 @@ import {
   PdfStatusBadge,
   ShortCode,
   SummaryCard,
-} from "../components/AdminUi";
-import { CopyButton } from "../components/CopyButton";
-import { ActionForm, type AdminAction } from "../components/ActionForm";
+} from "../../components/AdminUi";
+import { CopyButton } from "../../components/CopyButton";
+import { ActionForm, type AdminAction } from "../../components/ActionForm";
 
 type RegenerateAction = AdminAction;
 

@@ -1,4 +1,4 @@
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/auth";
 import { inspectionSummaryValue } from "@/lib/admin-inspection";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
@@ -52,11 +52,12 @@ export default async function AdminInspectionsPage({
   });
 
   return (
-    <AdminShell
-      title="Inspections"
-      description="Review submitted mobile inspections and evidence."
-    >
+    <>
+      <AdminPageHeader
+        title="Inspections"
+        description="Review submitted mobile inspections and evidence."
+      />
       <AdminInspectionsClient rows={rows} />
-    </AdminShell>
+    </>
   );
 }

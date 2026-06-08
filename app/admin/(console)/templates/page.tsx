@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import {
   countTemplateItems,
   loadChecklistTemplateFile,
@@ -50,10 +50,11 @@ export default async function AdminTemplatesPage({
     : templates;
 
   return (
-    <AdminShell
-      title="Templates"
-      description="Manage checklist versions used by mobile inspections."
-    >
+    <>
+      <AdminPageHeader
+        title="Templates"
+        description="Manage checklist versions used by mobile inspections."
+      />
       <AdminTemplatesClient
         error={error}
         importAction={importTemplateAction}
@@ -69,6 +70,6 @@ export default async function AdminTemplatesPage({
         }}
         templates={orderedTemplates}
       />
-    </AdminShell>
+    </>
   );
 }

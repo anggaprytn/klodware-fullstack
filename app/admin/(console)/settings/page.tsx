@@ -1,5 +1,5 @@
 import { Activity, ClipboardList, Database, FileText, Server } from "lucide-react";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/auth";
 import { formatDateTime } from "@/lib/admin-format";
 import { getServerEnv } from "@/lib/env";
@@ -11,7 +11,7 @@ import {
   ShortCode,
   StatusBadge,
   SummaryCard,
-} from "../components/AdminUi";
+} from "../../components/AdminUi";
 
 export default async function AdminSettingsPage() {
   await requireAdminSession();
@@ -42,10 +42,11 @@ export default async function AdminSettingsPage() {
   }
 
   return (
-    <AdminShell
-      title="Settings"
-      description="Safe runtime configuration and deployment notes for operations."
-    >
+    <>
+      <AdminPageHeader
+        title="Settings"
+        description="Safe runtime configuration and deployment notes for operations."
+      />
       <div className="admin-grid">
         <section className="metric-grid compact">
           <SummaryCard href="/api/mobile/health" label="Mobile API" tone={apiStatus === "active" ? "success" : "danger"} value={apiStatus === "active" ? "Online" : "Check"} />
@@ -161,6 +162,6 @@ export default async function AdminSettingsPage() {
           </ul>
         </PageSection>
       </div>
-    </AdminShell>
+    </>
   );
 }

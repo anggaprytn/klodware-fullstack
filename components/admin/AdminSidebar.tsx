@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, type MouseEvent } from "react";
 import {
   Activity,
   ClipboardList,
@@ -28,6 +29,32 @@ const navItems = [
 
 export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const [pendingNav, setPendingNav] = useState<{
+    fromPath: string;
+    href: string;
+  } | null>(null);
+
+  function handleNavigate(
+    event: MouseEvent<HTMLAnchorElement>,
+    href: string,
+    active: boolean,
+  ) {
+    if (
+      event.defaultPrevented ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    ) {
+      return;
+    }
+
+    if (!active) {
+      setPendingNav({ fromPath: pathname, href });
+    }
+    onNavigate?.();
+  }
 
   return (
     <aside className="admin-sidebar">
@@ -43,14 +70,18 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
           const Icon = item.icon;
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const pending =
+            pendingNav?.href === item.href &&
+            pendingNav.fromPath === pathname &&
+            !active;
 
           return (
             <Link
               aria-current={active ? "page" : undefined}
-              className={cn(active && "active")}
+              className={cn(active && "active", pending && "pending")}
               href={item.href}
               key={item.href}
-              onClick={onNavigate}
+              onClick={(event) => handleNavigate(event, item.href, active)}
             >
               <Icon aria-hidden="true" />
               <span>{item.label}</span>

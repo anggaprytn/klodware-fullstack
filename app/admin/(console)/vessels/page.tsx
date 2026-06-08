@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { requireAdminSession } from "@/lib/auth";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import type { InspectionRecord, PdfReportRecord, VesselRecord } from "@/lib/types";
@@ -205,10 +205,11 @@ export default async function AdminVesselsPage() {
   const operations = buildVesselOperations(vessels, inspections, reports);
 
   return (
-    <AdminShell
-      title="Vessels"
-      description="Manage vessel records used by mobile catalog and inspections."
-    >
+    <>
+      <AdminPageHeader
+        title="Vessels"
+        description="Manage vessel records used by mobile catalog and inspections."
+      />
       <AdminVesselsClient
         activateAction={activateVesselAction}
         createAction={createVesselAction}
@@ -218,6 +219,6 @@ export default async function AdminVesselsPage() {
         updateAction={updateVesselAction}
         vessels={vessels}
       />
-    </AdminShell>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { AdminShell } from "../../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import {
   adminFindings,
   checklistRows,
@@ -152,11 +152,12 @@ export default async function AdminInspectionDetailPage({
   };
 
   return (
-    <AdminShell
-      title="Inspection Detail"
-      description="Read-only review of synced inspection payload, evidence, and sync diagnostics."
-    >
+    <>
+      <AdminPageHeader
+        title="Inspection Detail"
+        description="Read-only review of synced inspection payload, evidence, and sync diagnostics."
+      />
       <InspectionDetailClient regenerateAction={regeneratePdfAction} view={view} />
-    </AdminShell>
+    </>
   );
 }

@@ -10,7 +10,7 @@ import {
   PdfStatusBadge,
   StatusBadge,
   SummaryCard,
-} from "../components/AdminUi";
+} from "../../components/AdminUi";
 
 export type AdminInspectionListRow = {
   id: string;

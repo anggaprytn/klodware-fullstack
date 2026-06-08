@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { AdminShell } from "../AdminShell";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { requireAdminSession } from "@/lib/auth";
 import type { UserRecord, UserRole, UserStatus, VesselRecord } from "@/lib/types";
@@ -129,10 +129,11 @@ export default async function AdminUsersPage() {
   ]);
 
   return (
-    <AdminShell
-      title="Users"
-      description="Manage admin and inspector accounts for mobile and web access."
-    >
+    <>
+      <AdminPageHeader
+        title="Users"
+        description="Manage admin and inspector accounts for mobile and web access."
+      />
       <AdminUsersClient
         createAction={createUserAction}
         currentUserId={session.user.id}
@@ -142,6 +143,6 @@ export default async function AdminUsersPage() {
         users={users}
         vessels={vessels}
       />
-    </AdminShell>
+    </>
   );
 }

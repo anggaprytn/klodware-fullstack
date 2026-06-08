@@ -1,43 +1,14 @@
-import Link from "next/link";
+import { shortenId, type StatusTone } from "@/lib/admin-format";
 import {
-  humanizeStatus,
-  pdfStatusLabel,
-  shortenId,
-  statusTone,
-  type StatusTone,
-} from "@/lib/admin-format";
-import type { PdfStatus } from "@/lib/types";
+  Badge,
+  PdfStatusBadge,
+  StatusBadge,
+} from "@/components/admin/StatusBadge";
+import { AdminSection } from "@/components/admin/AdminSection";
+import { AdminStatCard } from "@/components/admin/AdminStatCard";
+import { EmptyState } from "@/components/admin/EmptyState";
 
-export function Badge({
-  label,
-  tone,
-}: {
-  label: string;
-  tone?: StatusTone;
-}) {
-  return <span className={`status-badge ${tone ?? "neutral"}`}>{label}</span>;
-}
-
-export function StatusBadge({
-  status,
-  label,
-}: {
-  status: string;
-  label?: string;
-}) {
-  return (
-    <Badge
-      label={label ?? humanizeStatus(status)}
-      tone={statusTone(status)}
-    />
-  );
-}
-
-export function PdfStatusBadge({ status }: { status: PdfStatus }) {
-  return (
-    <Badge label={pdfStatusLabel(status)} tone={statusTone(status)} />
-  );
-}
+export { Badge, EmptyState, PdfStatusBadge, StatusBadge };
 
 export function PageSection({
   title,
@@ -51,16 +22,9 @@ export function PageSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="panel section-panel">
-      <div className="section-heading">
-        <div>
-          <h2>{title}</h2>
-          {description ? <p className="muted">{description}</p> : null}
-        </div>
-        {actions ? <div className="row-actions">{actions}</div> : null}
-      </div>
+    <AdminSection actions={actions} description={description} title={title}>
       {children}
-    </section>
+    </AdminSection>
   );
 }
 
@@ -77,40 +41,14 @@ export function SummaryCard({
   meta?: string;
   tone?: StatusTone;
 }) {
-  const body = (
-    <>
-      <span className={`metric-value ${tone}`}>{value}</span>
-      <span className="metric-label">{label}</span>
-      {meta ? <span className="metric-meta">{meta}</span> : null}
-    </>
-  );
-
-  if (href) {
-    return (
-      <Link className="panel metric-card interactive" href={href}>
-        {body}
-      </Link>
-    );
-  }
-
-  return <div className="panel metric-card">{body}</div>;
-}
-
-export function EmptyState({
-  title,
-  description,
-  action,
-}: {
-  title: string;
-  description?: string;
-  action?: React.ReactNode;
-}) {
   return (
-    <div className="empty-state">
-      <strong>{title}</strong>
-      {description ? <p>{description}</p> : null}
-      {action ? <div className="row-actions">{action}</div> : null}
-    </div>
+    <AdminStatCard
+      helper={meta}
+      href={href}
+      label={label}
+      tone={tone}
+      value={value}
+    />
   );
 }
 

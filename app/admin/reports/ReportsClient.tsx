@@ -6,6 +6,7 @@ import {
   formatDateTime,
   formatFileSize,
   pdfStatusLabel,
+  safeJsonPreview,
   shortenId,
   statusTone,
 } from "@/lib/admin-format";
@@ -142,7 +143,7 @@ function ReportDrawer({
   row: AdminReportRow;
 }) {
   const [tab, setTab] = useState<"overview" | "error" | "diagnostics">("overview");
-  const diagnostics = JSON.stringify(
+  const diagnostics = safeJsonPreview(
     {
       report_id: row.reportId || null,
       inspection_id: row.inspectionId,
@@ -153,8 +154,6 @@ function ReportDrawer({
       download_url_present: Boolean(row.downloadHref),
       metadata_json: row.metadata,
     },
-    null,
-    2,
   );
 
   return (

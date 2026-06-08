@@ -5,7 +5,10 @@ export type StatusTone =
   | "success"
   | "warning"
   | "danger"
-  | "info";
+  | "info"
+  | "violet"
+  | "orange"
+  | "sky";
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
   day: "numeric",
@@ -27,6 +30,8 @@ export function humanizeStatus(value: string | null | undefined) {
     .join(" ");
 }
 
+export const formatStatusLabel = humanizeStatus;
+
 export function pdfStatusLabel(status: PdfStatus | "pending" | "regenerating") {
   if (status === "ready") return "PDF Ready";
   if (status === "queued") return "Generating";
@@ -38,25 +43,31 @@ export function pdfStatusLabel(status: PdfStatus | "pending" | "regenerating") {
 export function statusTone(value: string | null | undefined): StatusTone {
   switch (value) {
     case "active":
-    case "submitted":
     case "ready":
     case "valid":
     case "success":
     case "synced":
       return "success";
+    case "submitted":
+      return "info";
     case "queued":
-    case "generating":
     case "pending":
     case "not_requested":
-    case "draft":
     case "warning":
       return "warning";
+    case "generating":
+      return "sky";
+    case "findings":
+      return "orange";
     case "failed":
     case "invalid":
-    case "inactive":
+    case "drydock":
       return "danger";
+    case "inactive":
+    case "draft":
+      return "neutral";
     case "locked":
-      return "info";
+      return "violet";
     default:
       return "neutral";
   }
@@ -87,6 +98,8 @@ export function formatFileSize(bytes: number | null | undefined) {
   return `${size.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
+export const formatBytes = formatFileSize;
+
 export function shortenId(value: string | null | undefined, edge = 8) {
   if (!value) return "Not available";
   if (value.length <= edge * 2 + 3) return value;
@@ -96,4 +109,41 @@ export function shortenId(value: string | null | undefined, edge = 8) {
 export function hasPocketBaseFile(value: string | string[] | null | undefined) {
   if (Array.isArray(value)) return value.length > 0;
   return Boolean(value);
+}
+
+const sensitiveKeyPattern = /authorization|bearer|cookie|credential|password|secret|signed|token/i;
+
+function scrubJson(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(scrubJson);
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, child]) => [
+        key,
+        sensitiveKeyPattern.test(key) ? "[redacted]" : scrubJson(child),
+      ]),
+    );
+  }
+
+  return value;
+}
+
+export function safeJsonPreview(value: unknown, spaces = 2) {
+  try {
+    return JSON.stringify(scrubJson(value), null, spaces);
+  } catch {
+    return "Unable to render JSON preview.";
+  }
+}
+
+export function getInitials(value: string | null | undefined) {
+  const parts = (value ?? "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length === 0) return "KW";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }

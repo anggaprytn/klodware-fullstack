@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { formatDateTime, shortenId } from "@/lib/admin-format";
+import { formatDateTime, safeJsonPreview, shortenId } from "@/lib/admin-format";
 import type { ChecklistTemplateRecord } from "@/lib/types";
 import {
   Badge,
@@ -288,11 +288,11 @@ function Drawer({
             <div className="admin-grid">
               <div className="row-actions">
                 <CopyButton
-                  value={JSON.stringify(template.schema_json ?? template.source_json, null, 2)}
+                  value={safeJsonPreview(template.schema_json ?? template.source_json)}
                 />
               </div>
               <pre className="json-preview">
-                {JSON.stringify(template.schema_json ?? template.source_json, null, 2)}
+                {safeJsonPreview(template.schema_json ?? template.source_json)}
               </pre>
             </div>
           ) : null}

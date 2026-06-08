@@ -3,6 +3,7 @@ import { AdminShell } from "../AdminShell";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { requireAdminSession } from "@/lib/auth";
 import type { UserRecord, UserRole, UserStatus, VesselRecord } from "@/lib/types";
+import { AdminUsersClient } from "./UsersClient";
 
 function textValue(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim();
@@ -132,168 +133,15 @@ export default async function AdminUsersPage() {
       title="Users"
       description="Manage admin and inspector accounts for mobile and web access."
     >
-      <div className="admin-grid">
-        <section className="panel">
-          <h2>Create User</h2>
-          <form className="form form-grid" action={createUserAction}>
-            <label className="field">
-              <span>Username</span>
-              <input name="username" required />
-            </label>
-            <label className="field">
-              <span>Email</span>
-              <input name="email" type="email" />
-            </label>
-            <label className="field">
-              <span>Full name</span>
-              <input name="full_name" required />
-            </label>
-            <label className="field">
-              <span>Employee no</span>
-              <input name="employee_no" />
-            </label>
-            <label className="field">
-              <span>Role</span>
-              <select name="role" defaultValue="inspector">
-                <option value="inspector">Inspector</option>
-                <option value="admin">Admin</option>
-              </select>
-            </label>
-            <label className="field">
-              <span>Status</span>
-              <select name="status" defaultValue="active">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </label>
-            <VesselAssignmentFields vessels={vessels} />
-            <label className="field">
-              <span>Password</span>
-              <input name="password" type="password" required />
-            </label>
-            <button className="button" type="submit">
-              Create user
-            </button>
-          </form>
-        </section>
-
-        <section className="panel">
-          <h2>User Accounts</h2>
-          <div className="crud-list">
-            {users.map((user) => (
-              <article className="crud-item" key={user.id}>
-                <form className="form form-grid" action={updateUserAction}>
-                  <input name="id" type="hidden" value={user.id} />
-                  <label className="field">
-                    <span>Username</span>
-                    <input name="username" defaultValue={user.username} required />
-                  </label>
-                  <label className="field">
-                    <span>Email</span>
-                    <input name="email" defaultValue={user.email} type="email" />
-                  </label>
-                  <label className="field">
-                    <span>Full name</span>
-                    <input name="full_name" defaultValue={user.full_name} required />
-                  </label>
-                  <label className="field">
-                    <span>Employee no</span>
-                    <input name="employee_no" defaultValue={user.employee_no ?? ""} />
-                  </label>
-                  <label className="field">
-                    <span>Role</span>
-                    <select name="role" defaultValue={user.role}>
-                      <option value="inspector">Inspector</option>
-                      <option value="admin">Admin</option>
-                      <option value="viewer">Viewer</option>
-                    </select>
-                  </label>
-                  <label className="field">
-                    <span>Status</span>
-                    <select
-                      name="status"
-                      defaultValue={user.status}
-                      disabled={user.id === session.user.id}
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                    </select>
-                  </label>
-                  <VesselAssignmentFields user={user} vessels={vessels} />
-                  <div className="row-actions">
-                    <span className={`status-pill ${user.status}`}>
-                      {user.role} / {user.status}
-                    </span>
-                    <button className="button" type="submit">
-                      Save
-                    </button>
-                  </div>
-                </form>
-                <form className="inline-form" action={resetPasswordAction}>
-                  <input name="id" type="hidden" value={user.id} />
-                  <input
-                    aria-label={`New password for ${user.username}`}
-                    name="password"
-                    placeholder="New manual password"
-                    type="password"
-                    required
-                  />
-                  <button className="button secondary" type="submit">
-                    Reset password
-                  </button>
-                </form>
-                {user.id !== session.user.id && user.status === "active" ? (
-                  <form action={deactivateUserAction}>
-                    <input name="id" type="hidden" value={user.id} />
-                    <button className="button danger" type="submit">
-                      Deactivate
-                    </button>
-                  </form>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
+      <AdminUsersClient
+        createAction={createUserAction}
+        currentUserId={session.user.id}
+        deactivateAction={deactivateUserAction}
+        resetPasswordAction={resetPasswordAction}
+        updateAction={updateUserAction}
+        users={users}
+        vessels={vessels}
+      />
     </AdminShell>
-  );
-}
-
-function assignedVesselIds(user?: UserRecord) {
-  const vessels = user?.inspectable_vessels;
-  if (!vessels) return new Set<string>();
-  return new Set(Array.isArray(vessels) ? vessels : [vessels]);
-}
-
-function VesselAssignmentFields({
-  user,
-  vessels,
-}: {
-  user?: UserRecord;
-  vessels: VesselRecord[];
-}) {
-  const assigned = assignedVesselIds(user);
-
-  return (
-    <fieldset className="field assignment-field">
-      <legend>Inspectable vessels</legend>
-      <div className="checkbox-list">
-        {vessels.length > 0 ? (
-          vessels.map((vessel) => (
-            <label className="checkbox-field" key={vessel.id}>
-              <input
-                defaultChecked={assigned.has(vessel.id)}
-                name="inspectable_vessels"
-                type="checkbox"
-                value={vessel.id}
-              />
-              <span>{vessel.name}</span>
-            </label>
-          ))
-        ) : (
-          <p className="muted">No active vessels available.</p>
-        )}
-      </div>
-    </fieldset>
   );
 }

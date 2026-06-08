@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { formatDateTime, formatFileSize } from "@/lib/admin-format";
+import { formatDateTime, formatFileSize, safeJsonPreview } from "@/lib/admin-format";
 import type { AdminFinding } from "@/lib/admin-inspection";
 import type { InspectionStatus, PdfStatus } from "@/lib/types";
 import {
@@ -197,7 +197,7 @@ export function InspectionDetailClient({
     view.summary.missingScoreCount +
     view.summary.missingRequiredRemarksCount +
     view.summary.missingRequiredPhotoCount;
-  const diagnosticsText = JSON.stringify(
+  const diagnosticsText = safeJsonPreview(
     {
       inspection_id: view.id,
       local_id: view.localId,
@@ -206,8 +206,6 @@ export function InspectionDetailClient({
       sync_events: view.syncEvents,
       pdf_report_id: view.pdfReport?.id ?? null,
     },
-    null,
-    2,
   );
 
   return (
@@ -484,7 +482,7 @@ export function InspectionDetailClient({
                     <td>{event.retryable ? "Yes" : "No"}</td>
                     <td>
                       <pre className="checksum">
-                        {event.error ? JSON.stringify(event.error) : ""}
+                        {event.error ? safeJsonPreview(event.error, 0) : ""}
                       </pre>
                     </td>
                   </tr>
@@ -499,7 +497,7 @@ export function InspectionDetailClient({
           </div>
           <details>
             <summary>Raw Payload</summary>
-            <pre className="json-preview">{JSON.stringify(view.rawPayload, null, 2)}</pre>
+            <pre className="json-preview">{safeJsonPreview(view.rawPayload)}</pre>
           </details>
         </PageSection>
       ) : null}

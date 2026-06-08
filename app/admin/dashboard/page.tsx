@@ -1,8 +1,18 @@
 import Link from "next/link";
+import {
+  Activity,
+  AlertTriangle,
+  ClipboardList,
+  FileText,
+  Ship,
+  ShieldCheck,
+  Wrench,
+} from "lucide-react";
 import { AdminShell } from "../AdminShell";
 import { getAdminStats, requireAdminSession } from "@/lib/auth";
 import { getSuperuserPocketBase } from "@/lib/pocketbase";
 import { formatDateTime, hasPocketBaseFile, humanizeStatus } from "@/lib/admin-format";
+import { AdminStatCard } from "@/components/admin/AdminStatCard";
 import {
   Badge,
   EmptyState,
@@ -119,6 +129,23 @@ export default async function AdminDashboardPage() {
     (inspection) =>
       inspection.status === "submitted" || inspection.status === "locked",
   );
+  const activeTemplates = templates.filter(
+    (template) => template.active === true || template.is_active === true,
+  );
+  const findingsTotal = inspections.reduce((total, inspection) => {
+    const summary = inspection.summary_json as
+      | { findings_count?: unknown }
+      | null
+      | undefined;
+    return total + (typeof summary?.findings_count === "number" ? summary.findings_count : 0);
+  }, 0);
+  const drydockTotal = inspections.reduce((total, inspection) => {
+    const summary = inspection.summary_json as
+      | { drydock_count?: unknown }
+      | null
+      | undefined;
+    return total + (typeof summary?.drydock_count === "number" ? summary.drydock_count : 0);
+  }, 0);
   const inspectionsWithoutSyncTime = inspections.filter(
     (inspection) => !inspection.synced_at,
   );
@@ -221,11 +248,68 @@ export default async function AdminDashboardPage() {
     >
       <div className="admin-grid">
         <section className="metric-grid">
-          <SummaryCard href="/admin/vessels" label="Vessels" value={stats.vessels} />
-          <SummaryCard href="/admin/templates" label="Templates" value={stats.templates} />
-          <SummaryCard href="/admin/inspections" label="Inspections" value={stats.inspections} />
-          <SummaryCard href="/admin/reports" label="Reports" value={stats.reports} />
-          <SummaryCard href="/admin/users" label="Users" value={stats.users} />
+          <AdminStatCard
+            helper={`${activeVessels.length} active in mobile catalog`}
+            href="/admin/vessels"
+            icon={Ship}
+            label="Total vessels"
+            value={stats.vessels}
+          />
+          <AdminStatCard
+            helper={`${invalidTemplates.length} incomplete`}
+            href="/admin/templates"
+            icon={ClipboardList}
+            label="Active templates"
+            tone={activeTemplates.length > 0 ? "success" : "danger"}
+            value={activeTemplates.length}
+          />
+          <AdminStatCard
+            helper="Synced inspection records"
+            href="/admin/inspections"
+            icon={ShieldCheck}
+            label="Total inspections"
+            value={stats.inspections}
+          />
+          <AdminStatCard
+            helper="Submitted or locked"
+            href="/admin/inspections"
+            icon={ShieldCheck}
+            label="Submitted inspections"
+            tone="info"
+            value={submittedInspections.length}
+          />
+          <AdminStatCard
+            helper="Queued or generating"
+            href="/admin/reports"
+            icon={FileText}
+            label="PDF queued"
+            tone={reportsGenerating.length > 0 ? "warning" : "success"}
+            value={reportsGenerating.length}
+          />
+          <AdminStatCard
+            helper="Needs regeneration review"
+            href="/admin/reports"
+            icon={AlertTriangle}
+            label="PDF failed"
+            tone={pdfFailedReports.length > 0 ? "danger" : "success"}
+            value={pdfFailedReports.length}
+          />
+          <AdminStatCard
+            helper="Items requiring attention"
+            href="/admin/inspections"
+            icon={AlertTriangle}
+            label="Findings"
+            tone={findingsTotal > 0 ? "orange" : "success"}
+            value={findingsTotal}
+          />
+          <AdminStatCard
+            helper="Drydock-scored items"
+            href="/admin/inspections"
+            icon={Wrench}
+            label="Drydock items"
+            tone={drydockTotal > 0 ? "danger" : "success"}
+            value={drydockTotal}
+          />
         </section>
 
         {!hasOperationalData ? (
@@ -291,6 +375,111 @@ export default async function AdminDashboardPage() {
           ) : (
             <EmptyState title="No operational issues found in available records." />
           )}
+        </PageSection>
+
+        <PageSection title="Recent Inspections">
+          {submittedInspections.length > 0 ? (
+            <div className="table-wrap">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Inspection</th>
+                    <th>Inspector</th>
+                    <th>Status</th>
+                    <th>PDF</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {submittedInspections.slice(0, 6).map((inspection) => (
+                    <tr key={inspection.id}>
+                      <td>
+                        <Link href={`/admin/inspections/${inspection.id}`}>
+                          {inspection.local_id || inspection.id}
+                        </Link>
+                      </td>
+                      <td>{inspection.inspector_name || "Not available"}</td>
+                      <td>
+                        <Badge label={humanizeStatus(inspection.status)} tone="info" />
+                      </td>
+                      <td>
+                        <Badge label={humanizeStatus(inspection.pdf_status)} tone={inspection.pdf_status === "failed" ? "danger" : inspection.pdf_status === "ready" ? "success" : "warning"} />
+                      </td>
+                      <td>{formatDateTime(inspection.submitted_at)}</td>
+                      <td>
+                        <Link className="button secondary" href={`/admin/inspections/${inspection.id}`}>
+                          View Detail
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <EmptyState title="No submitted inspections yet." />
+          )}
+        </PageSection>
+
+        <PageSection title="PDF Jobs Needing Attention">
+          {pdfFailedReports.length + reportsGenerating.length > 0 ? (
+            <div className="admin-list">
+              {[...pdfFailedReports, ...reportsGenerating].slice(0, 8).map((report) => (
+                <Link className="attention-row" href="/admin/reports" key={report.id}>
+                  <div>
+                    <strong>{report.status === "failed" ? "PDF generation failed" : "PDF generation in progress"}</strong>
+                    <p className="muted">{report.error_message || report.inspection}</p>
+                  </div>
+                  <Badge
+                    label={humanizeStatus(report.status)}
+                    tone={report.status === "failed" ? "danger" : "warning"}
+                  />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState title="No PDF jobs need attention." />
+          )}
+        </PageSection>
+
+        <PageSection title="Sync Issues">
+          {syncFailures.length > 0 ? (
+            <div className="admin-list">
+              {syncFailures.slice(0, 8).map((event) => (
+                <Link className="attention-row" href="/admin/sync-events" key={event.id}>
+                  <div>
+                    <strong>{humanizeStatus(event.event_type)}</strong>
+                    <p className="muted">{event.device_id || event.request_id || "No device ID"}</p>
+                  </div>
+                  <Badge label="Failed" tone="danger" />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState title="No failed sync events in the latest diagnostics." />
+          )}
+        </PageSection>
+
+        <PageSection title="Quick Links">
+          <div className="quick-link-grid">
+            <Link href="/admin/vessels">
+              <Ship aria-hidden="true" />
+              <span>Manage Vessels</span>
+            </Link>
+            <Link href="/admin/templates">
+              <ClipboardList aria-hidden="true" />
+              <span>Review Templates</span>
+            </Link>
+            <Link href="/admin/reports">
+              <FileText aria-hidden="true" />
+              <span>PDF Queue</span>
+            </Link>
+            <Link href="/admin/sync-events">
+              <Activity aria-hidden="true" />
+              <span>Sync Events</span>
+            </Link>
+          </div>
         </PageSection>
 
         <PageSection title="Recent Activity">

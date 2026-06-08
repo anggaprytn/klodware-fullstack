@@ -73,6 +73,7 @@ export default function AdminLoginPage() {
               id="username"
               name="username"
               autoComplete="username"
+              placeholder="Enter username"
               required
             />
           </div>
@@ -83,6 +84,7 @@ export default function AdminLoginPage() {
               name="password"
               type="password"
               autoComplete="current-password"
+              placeholder="Enter password"
               required
             />
           </div>

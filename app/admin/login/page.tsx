@@ -28,7 +28,9 @@ export default function AdminLoginPage() {
     setSubmitting(false);
 
     if (!response.ok) {
-      setError("Username or password is incorrect, or admin access is not allowed.");
+      setError(
+        "Username or password is incorrect, or admin access is not allowed.",
+      );
       return;
     }
 
@@ -96,7 +98,9 @@ export default function AdminLoginPage() {
             {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
-        <p className="login-footnote">Mobile inspection execution remains on React Native app.</p>
+        <p className="login-footnote">
+          Field inspections are completed in the Klodware mobile app.
+        </p>
       </section>
     </main>
   );

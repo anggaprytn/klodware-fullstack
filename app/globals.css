@@ -1635,19 +1635,30 @@ details summary {
 }
 
 .tabs {
+  align-items: center;
   background: #f1f5f9;
   border: 0;
   border-radius: 14px;
   display: inline-flex;
+  flex-wrap: nowrap;
+  height: 42px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 4px;
 }
 
 .tab-button {
+  align-items: center;
   border: 0;
   border-radius: 10px;
   color: #475569;
-  min-height: 34px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 34px;
+  justify-content: center;
   padding: 7px 12px;
+  white-space: nowrap;
 }
 
 .tab-button.active {

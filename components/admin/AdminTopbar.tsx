@@ -21,7 +21,7 @@ export function AdminTopbar({ user }: { user: MobileUserProfile }) {
             </Button>
           </SheetTrigger>
           <SheetContent className="admin-mobile-sheet">
-            <AdminSidebar onNavigate={() => setOpen(false)} />
+            <AdminSidebar collapsible={false} onNavigate={() => setOpen(false)} />
           </SheetContent>
         </Sheet>
       </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Script from "next/script";
 import { ToastProvider } from "./admin/components/ToastProvider";
+import { ADMIN_COOKIE } from "@/lib/auth";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,11 +11,14 @@ export const metadata: Metadata = {
     "Web admin and REST API foundation for Klodware Ship Maintenance.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const assistantTheme = cookieStore.has(ADMIN_COOKIE) ? "light" : "dark";
+
   return (
     <html lang="en">
       <body>
@@ -32,7 +37,7 @@ export default function RootLayout({
           data-persistence="local"
           data-persistence-ttl-days="7"
           data-position="bottom-right"
-          data-theme="light"
+          data-theme={assistantTheme}
         />
       </body>
     </html>

@@ -32,7 +32,7 @@ export default function RootLayout({
           data-persistence="local"
           data-persistence-ttl-days="7"
           data-position="bottom-right"
-          data-theme="dark"
+          data-theme="light"
         />
       </body>
     </html>

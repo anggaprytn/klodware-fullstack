@@ -40,6 +40,7 @@ export default async function RootLayout({
           data-persistence="local"
           data-persistence-ttl-days="7"
           data-position="bottom-right"
+          data-voice-enabled="true"
           data-theme={assistantTheme}
         />
       </body>

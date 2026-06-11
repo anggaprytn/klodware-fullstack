@@ -20,6 +20,7 @@ export default function RootLayout({
         <ToastProvider>{children}</ToastProvider>
         <Script
           src="https://stator.apps.anggaprytn.com/widget.js"
+          strategy="afterInteractive"
           data-agent-id="12774c6a-6ad9-4a49-9de0-9765a9866406"
           data-public-key="pk_stator_Qi87XyXm0BOexaeVu_GpGH6R0JsIpoDf2rNbfVRPNoA"
           data-api-base-url="https://stator-api.apps.anggaprytn.com"

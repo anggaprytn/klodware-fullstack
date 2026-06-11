@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Script from "next/script";
 import { ToastProvider } from "./admin/components/ToastProvider";
+import { AssistantThemeSync } from "@/components/assistant/AssistantThemeSync";
 import { ADMIN_COOKIE } from "@/lib/auth";
 import "./globals.css";
 
@@ -23,7 +24,9 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <ToastProvider>{children}</ToastProvider>
+        <AssistantThemeSync initialTheme={assistantTheme} />
         <Script
+          id="klodware-assistant-widget"
           src="https://stator.apps.anggaprytn.com/widget.js"
           strategy="afterInteractive"
           data-agent-id="12774c6a-6ad9-4a49-9de0-9765a9866406"

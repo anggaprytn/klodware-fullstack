@@ -5,7 +5,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Klodware Ship Maintenance",
-  description: "Web admin and REST API foundation for Klodware Ship Maintenance.",
+  description:
+    "Web admin and REST API foundation for Klodware Ship Maintenance.",
 };
 
 export default function RootLayout({
@@ -31,7 +32,7 @@ export default function RootLayout({
           data-persistence="local"
           data-persistence-ttl-days="7"
           data-position="bottom-right"
-          data-theme="light"
+          data-theme="dark"
         />
       </body>
     </html>
